@@ -12,9 +12,12 @@
     <div class="finder-sidebar">
         <!-- Topo da Sidebar: Colar e Pin -->
         <div class="top-widgets">
-            <button id="btn-paste" class="minimap-btn" title="Colar Coordenadas" style="width: auto; padding: 0 10px; border-radius: 16px; flex-grow: 1;"><i class="fa-solid fa-paste"></i>&nbsp;Colar</button>
+            <button id="btn-paste" class="minimap-btn" title="Colar Coordenadas"
+                style="width: auto; padding: 0 10px; border-radius: 16px; flex-grow: 1;"><i
+                    class="fa-solid fa-paste"></i>&nbsp;Colar</button>
             <div class="minimap-pin">
-                <input type="checkbox" id="always-on-top" style="display:none;" onchange="window.electronAPI && window.electronAPI.toggleAlwaysOnTop(this.checked)">
+                <input type="checkbox" id="always-on-top" style="display:none;"
+                    onchange="window.electronAPI && window.electronAPI.toggleAlwaysOnTop(this.checked)">
                 <label for="always-on-top" title="Fixar no Topo"><i class="fa-solid fa-thumbtack"></i></label>
             </div>
         </div>
@@ -37,35 +40,48 @@
                 <img src="imgs_finder/RadarRed.png" alt="Vermelho">
             </button>
         </div>
-        
+
         <div class="finder-compass">
-            <button class="dir-btn" onclick="dirClick(7)" title="NorteOeste"><img src="imgs_finder/NorthWest.png"></button>
+            <!-- PASSO 1: Botão Noroeste corrigido para enviar o valor 5 (225 graus no JS) -->
+            <button class="dir-btn" onclick="dirClick(5)" title="NorteOeste"><img
+                    src="imgs_finder/NorthWest.png"></button>
+
+            <!-- Botão Norte (mantido original) -->
             <button class="dir-btn" onclick="dirClick(6)" title="Norte"><img src="imgs_finder/North.png"></button>
-            <button class="dir-btn" onclick="dirClick(5)" title="NordEste"><img src="imgs_finder/NorthEast.png"></button>
+
+            <!-- PASSO 2: Botão Nordeste corrigido para enviar o valor 7 (315 graus no JS) -->
+            <button class="dir-btn" onclick="dirClick(7)" title="NordEste"><img
+                    src="imgs_finder/NorthEast.png"></button>
+
+            <!-- Botões restantes da bússola mantidos com os valores originais corretos -->
             <button class="dir-btn" onclick="dirClick(4)" title="Oeste"><img src="imgs_finder/West.png"></button>
-            <button class="dir-btn center-dir" onclick="dirClick(-1)" title="Centro"><img src="imgs_finder/Center.png"></button>
+            <button class="dir-btn center-dir" onclick="dirClick(-1)" title="Centro"><img
+                    src="imgs_finder/Center.png"></button>
             <button class="dir-btn" onclick="dirClick(0)" title="Leste"><img src="imgs_finder/East.png"></button>
-            <button class="dir-btn" onclick="dirClick(3)" title="SudOeste"><img src="imgs_finder/SouthWest.png"></button>
+            <button class="dir-btn" onclick="dirClick(3)" title="SudOeste"><img
+                    src="imgs_finder/SouthWest.png"></button>
             <button class="dir-btn" onclick="dirClick(2)" title="Sul"><img src="imgs_finder/South.png"></button>
             <button class="dir-btn" onclick="dirClick(1)" title="SudEste"><img src="imgs_finder/SouthEast.png"></button>
         </div>
-        
+
         <div class="finder-list-area">
             <div id="pos-list"></div>
-            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png" alt="Limpar"> Limpar</button>
+            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
+                    alt="Limpar"> Limpar</button>
         </div>
     </div>
-    
+
     <div id="coords-display" class="minimap-coords">(X, Y, Z)</div>
     <div class="minimap-bottom-bar">
         <button id="btn-floor-up" class="minimap-btn" title="Subir Andar"><i class="fa-solid fa-arrow-up"></i></button>
-        <button id="btn-floor-down" class="minimap-btn" title="Descer Andar"><i class="fa-solid fa-arrow-down"></i></button>
+        <button id="btn-floor-down" class="minimap-btn" title="Descer Andar"><i
+                class="fa-solid fa-arrow-down"></i></button>
         <button id="btn-center" class="minimap-btn" title="Centralizar"><i class="fa-solid fa-crosshairs"></i></button>
         <button id="btn-zoom-in" class="minimap-btn" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
         <button id="btn-zoom-out" class="minimap-btn" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
     </div>
     <div id="map"></div>
-    
+
     <div id="context-menu" class="context-menu" style="display: none;">
         <button id="btn-copy-coord"><i class="fa-solid fa-copy"></i> Copiar: <span id="context-coord"></span></button>
     </div>
