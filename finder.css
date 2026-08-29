@@ -6,38 +6,87 @@ body {
 }
 
 #map { 
-    flex-grow: 1;
+    width: 100vw;
     height: 100vh; 
     background: #000; 
 }
 
-#panel {
+.top-widgets {
     display: flex;
-    flex-direction: column;
-    width: 250px;           /* Largura fixa do painel */
-    height: 100vh;
-    background-color: #222; /* Cor escura para combinar com o dark gray */
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+.minimap-select {
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
-    padding: 2px;
-    border-right: 2px solid #444;
-    justify-items: center;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
 }
 
-#panel h2 {
-    text-align: center;
+.minimap-pin label {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px;
+    transition: color 0.2s;
+}
+.minimap-pin input:checked + label {
+    color: #ffffff;
+    text-shadow: -1px -1px 0 #ff0000, 1px -1px 0 #ff0000, -1px 1px 0 #ff0000, 1px 1px 0 #ff0000;
+}
+.minimap-pin label:hover {
+    color: #fff;
 }
 
-#coords-display {        
-        background: rgba(0, 0, 0, 0.7);
-        color: #00ff00; /* Estilo terminal/dev */
-        padding: 4px 4px;
-        border-radius: 4px;
-        font-family: monospace;
-        text-align: center;
+.minimap-coords {
+    position: absolute;
+    top: 22px;
+    left: 10px;
+    z-index: 1000;
+    color: #00ff00;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    pointer-events: none;
+}
+
+.minimap-bottom-bar {
+    position: absolute;
+    z-index: 1000;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.minimap-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.minimap-btn:hover {
+    background-color: rgba(60, 60, 60, 0.9);
 }
 
 .leaflet-tile {
-      image-rendering: -webkit-optimize-contrast;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       -ms-interpolation-mode: nearest-neighbor;
@@ -122,27 +171,6 @@ body {
     cursor: pointer;
 }
 
-.floor-control {
-    display: flex;
-    flex-direction: column;
-}
-
-.floor-control button {
-    width: 30px;
-    height: 30px;
-    background-color: white;
-    border-style: hidden;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.floor-control button:hover {
-    background-color: #f4f4f4;
-}
-
-.floor-control button:active {
-    background-color: #ddd;
-}
 
 #pos-list {
     width: 100%;
@@ -174,4 +202,159 @@ body {
     color: white;
     cursor: pointer;
     margin-right: 5px;
+}
+/* Context Menu */
+.context-menu {
+    position: absolute;
+    z-index: 9999;
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    font-family: 'Poppins', sans-serif;
+}
+.context-menu button {
+    background: transparent;
+    color: #00ff00;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.context-menu button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Finder Sidebar Panel */
+.finder-sidebar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    padding: 12px;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 160px;
+    box-sizing: border-box;
+}
+
+.finder-colors {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+.color-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.2s, border 0.2s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.color-btn img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: grayscale(40%) brightness(0.7);
+    transition: filter 0.2s;
+}
+.color-btn:hover img { filter: grayscale(0%) brightness(1); }
+.color-btn.active img { filter: grayscale(0%) brightness(1.2); }
+.color-btn.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+
+.finder-compass {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+.dir-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid transparent;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, border 0.2s;
+    padding: 0;
+}
+.dir-btn img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    filter: brightness(0.7);
+    transition: filter 0.2s;
+}
+.dir-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+.dir-btn:hover img {
+    filter: brightness(1.2);
+}
+.dir-btn:active {
+    border-color: #fff;
+}
+.center-dir img {
+    width: 22px;
+    height: 22px;
+}
+
+/* List area at the bottom of tools panel */
+.finder-list-area {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 5px;
+}
+
+#pos-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 120px;
+    max-height: 120px;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.clear-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(255, 60, 60, 0.15);
+    border: 1px solid rgba(255, 60, 60, 0.3);
+    border-radius: 8px;
+    color: #ff8080;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background 0.2s;
+}
+.clear-btn:hover {
+    background: rgba(255, 60, 60, 0.3);
+}
+.clear-btn img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
 }

@@ -1,0 +1,47 @@
+{
+  "name": "crafter",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-builder build --win"
+  },
+  "build": {
+    "appId": "com.crafter.finder",
+    "productName": "Finder",
+    "icon": "imgs_finder/icon_256.png",
+    "files": [
+      "**/*",
+      "!**/.Jules",
+      "!**/.git",
+      "!dist"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "imgs_finder/icon_256.png"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kaaize/Crafter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kaaize/Crafter/issues"
+  },
+  "homepage": "https://github.com/Kaaize/Crafter#readme",
+  "description": "",
+  "devDependencies": {
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "@turf/turf": "^7.4.0",
+    "leaflet": "^1.9.4",
+    "puppeteer": "^25.9.0"
+  }
+}

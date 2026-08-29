@@ -14,7 +14,6 @@ let allSpawnMarks
 async function loadSpawnMarks() {
     try {
         const response = await fetch('spawn_mark.json');
-
         allSpawnMarks = await response.json();
     } catch (error) {
         console.error("Erro ao carregar o json de SpawnMark:", error)
@@ -27,12 +26,15 @@ const display = document.getElementById('coords-display');
 
 let activeSelector = null;
 let activeCross = null;
+let userPin = null;
 
-//[31488, 21248]
+// Stores the last pasted coordinate, used when direction is clicked
+let lastPastedPoint = null;
+
 let limitX = 31488
 let limitY = 21248
 
-let curDist = {min: 20, max: 35}
+let curDist = {min: 0, max: 30}
 let curDir = 0
 
 let infos = []
@@ -43,9 +45,7 @@ var CRSPixel = L.Util.extend(L.CRS.Simple, {
     transformation: new L.Transformation(1, 0, 1, 0)
 })
 
-var btnDisplay = null;
-
-distButtons = document.querySelectorAll('.dist-btn');
+distButtons = document.querySelectorAll('.color-btn');
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
@@ -68,79 +68,72 @@ const floors = {
     "16": L.tileLayer('nw_tiles/16/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
 }
 
-var mapBounds = [
+var bounds = [
     [19968, 29696],
     [21248, 31488]
 ]
 
 const map = L.map('map', {
     crs: CRSPixel,
+    fadeAnimation: false,
     layers: [floors["5"]],
     minZoom: -4,
     maxZoom: 4,
-    maxBounds: mapBounds,
+    maxBounds: bounds,
     zoomSnap: 1,
-    zoomDelta: 1
+    zoomDelta: 1,
+    zoomControl: false,
+    attributionControl: false
 }).setView([20518, 30564], 2)
 
 let spawnsLayer = L.layerGroup().addTo(map);
 
 let curFloor = 5; 
 
-const ZControl = L.Control.extend({
-    options: { position: 'topleft' },
-    onAdd: function() {
-        const container = L.DomUtil.create('div', 'floor-control');
+document.getElementById('btn-floor-up').addEventListener('click', () => {
+    if (curFloor > 1) changeFloor(curFloor - 1);
+});
 
-        L.DomEvent.disableClickPropagation(container);
-        
-        const btnUp = L.DomUtil.create('button', '', container);
-        btnUp.innerHTML = '▲';
-        btnUp.title = 'Subir Andar';
+document.getElementById('btn-floor-down').addEventListener('click', () => {
+    if (curFloor < 16) changeFloor(curFloor + 1);
+});
 
-        btnDisplay = L.DomUtil.create('button', '', container);
-        btnDisplay.innerHTML = curFloor;
-        btnDisplay.className = 'floor-display';
-        L.DomEvent.on(btnDisplay, 'click', (e) => {
-            L.DomEvent.stop(e);
-            changeFloor(7);
-        });
+document.getElementById('btn-zoom-in').addEventListener('click', () => {
+    map.zoomIn();
+});
 
-        const btnDown = L.DomUtil.create('button', '', container);
-        btnDown.innerHTML = '▼';
-        btnDown.title = 'Descer Andar';
+document.getElementById('btn-zoom-out').addEventListener('click', () => {
+    map.zoomOut();
+});
 
-        L.DomEvent.on(btnUp, 'click', (e) => {
-            L.DomEvent.stop(e);
-            if (curFloor > 1) changeFloor(curFloor - 1);
-        });
-
-        L.DomEvent.on(btnDown, 'click', (e) => {
-            L.DomEvent.stop(e);
-            if (curFloor < 16) changeFloor(curFloor + 1);
-        });
-
-        return container;
+document.getElementById('btn-center').addEventListener('click', () => {
+    if (lastPastedPoint) {
+        focusPoint(lastPastedPoint.x, lastPastedPoint.y, lastPastedPoint.z, map.getZoom());
+    } else if (intersection && intersection.center) {
+        focusPoint(intersection.center[0], intersection.center[1], curFloor, getZoomLevelFromBox(intersection.box));
+    } else {
+        map.setView([3793, 4098], 2);
     }
 });
 
-map.addControl(new ZControl());
+document.getElementById('btn-paste').addEventListener('click', pasteAndFill);
 
 function changeFloor(novoAndar) {
-
     if (!floors[novoAndar.toString()]) {
         return
     }
-
     map.removeLayer(floors[curFloor.toString()]);
-    
     curFloor = novoAndar;
     floors[curFloor.toString()].addTo(map);
-    btnDisplay.innerHTML = curFloor;
-
     const points = getPointsToMarkSpawn();
     markSpawnPoints(points);
 }
+
+map.on('mousemove', function(e) {
+    const x = Math.floor(e.latlng.lng);
+    const y = Math.floor(e.latlng.lat);
+    display.innerText = `(${x}, ${y}, ${curFloor})`;
+});
 
 map.on('click', function(e) {
     if (activeSelector) map.removeLayer(activeSelector);
@@ -150,12 +143,12 @@ map.on('click', function(e) {
     const y = Math.floor(e.latlng.lat) + 0.5;    
     raio = 0.5
 
-    var bounds = [
+    var clickBounds = [
         [y + raio, x + raio],
         [y - raio, x - raio]
     ];
     
-    activeSelector = L.rectangle(bounds, {color: "#333333", weight: 1, fillOpacity: 0, smoothFactor: 0, interactive: false}).addTo(map);
+    activeSelector = L.rectangle(clickBounds, {color: "#333333", weight: 1, fillOpacity: 0, smoothFactor: 0, interactive: false}).addTo(map);
 
     xMeio = x; 
     yMeio = y;
@@ -163,8 +156,35 @@ map.on('click', function(e) {
     const linhaV = L.polyline([[0, xMeio], [limitY, xMeio]], {color: '#333333', weight: 1, interactive: false});
     const linhaH = L.polyline([[yMeio, 0], [yMeio, limitX]], {color: '#333333', weight: 1, interactive: false});
     activeCross = L.layerGroup([linhaV, linhaH]).addTo(map);
-    
-    display.innerText = `X: ${Math.floor(x)}, Y: ${Math.floor(y)}, Z: ${curFloor}`;
+});
+
+map.on('contextmenu', function(e) {
+    const x = Math.floor(e.latlng.lng);
+    const y = Math.floor(e.latlng.lat);
+    const coordString = `${x}, ${y}, ${curFloor}`;
+
+    const contextMenu = document.getElementById('context-menu');
+    const contextCoord = document.getElementById('context-coord');
+
+    contextCoord.innerText = coordString;
+    contextMenu.style.display = 'block';
+    contextMenu.style.left = e.originalEvent.pageX + 'px';
+    contextMenu.style.top = e.originalEvent.pageY + 'px';
+
+    const btnCopy = document.getElementById('btn-copy-coord');
+    btnCopy.onclick = async () => {
+        try {
+            await navigator.clipboard.writeText(coordString);
+            contextMenu.style.display = 'none';
+        } catch (err) {
+            console.error(err);
+        }
+    };
+});
+
+map.on('click', () => {
+    const contextMenu = document.getElementById('context-menu');
+    if (contextMenu) contextMenu.style.display = 'none';
 });
 
 function distClick(event, dist) {
@@ -181,58 +201,119 @@ function distClick(event, dist) {
             curDist = {min: 20, max: 35}
             break
         case 2: 
-            curDist = {min: 35, max: Math.max(limitY, limitX)}
+            curDist = {min: 500, max: Math.max(limitY, limitX)}
             break
     }
 }
 
+/**
+ * Called when user clicks a compass direction button.
+ * Uses the lastPastedPoint stored from pasteAndFill().
+ * Does NOT re-read the clipboard.
+ */
 function dirClick(dir) {
-    curDir = dir * 45
-    pasteAndFill()
+    curDir = dir * 45;
+
+    if (!lastPastedPoint) {
+        alert("Cole uma coordenada primeiro usando o botão Colar!");
+        return;
+    }
+
+    const point = {
+        x: lastPastedPoint.x,
+        y: lastPastedPoint.y,
+        z: lastPastedPoint.z,
+        dist: curDist,
+        ang: curDir
+    };
+
+    point.points = getPoints({x: point.x, y: point.y, z: point.z}, point.ang, point.dist.min, point.dist.max);
+    infos.push(point);
+    updateMarks();
+    listUpdate();
 }
 
 function focusPoint(x, y, z, zoom) {
-    console.log(x,y,z,zoom)
     if (z !== undefined && z !== curFloor) {
         changeFloor(z); 
     }
 
-    x = clamp(x, mapBounds[0][1], mapBounds[1][1]);
-    y = clamp(y, mapBounds[0][0], mapBounds[1][0]);
+    x = clamp(x, bounds[0][1], bounds[1][1]);
+    y = clamp(y, bounds[0][0], bounds[1][0]);
 
     map.setView([y, x], zoom); 
 }
 
+/**
+ * Reads clipboard, validates the coordinate, places PIN and pans the map.
+ * Saves the result in lastPastedPoint for later use with dirClick().
+ */
 async function pasteAndFill() {
+    const btnPaste = document.getElementById('btn-paste');
+    const originalHTML = btnPaste ? btnPaste.innerHTML : '';
+
     try {
-        const cbxModoTeste = document.getElementById('checkbox-modo');
-
-        if (cbxModoTeste.checked) {
-            text =  display.textContent;
-        }
-        else {
-            text = await navigator.clipboard.readText();
-        }
-
+        const text = await navigator.clipboard.readText();
         const regex = /(?:X[:\s]*)?(\d+)[^0-9]+(?:Y[:\s]*)?(\d+)[^0-9]+(?:Z[:\s]*)?(\d+)/i;
         const match = text.match(regex);
 
-        if (!match) {
+        if (!match || match.length < 4) {
+            if (btnPaste) {
+                btnPaste.innerHTML = '<i class="fa-solid fa-times"></i>&nbsp;Coordenada Inválida';
+                btnPaste.style.backgroundColor = '#ef4444';
+                btnPaste.style.color = '#ffffff';
+                setTimeout(() => {
+                    btnPaste.innerHTML = originalHTML;
+                    btnPaste.style.backgroundColor = '';
+                    btnPaste.style.color = '';
+                }, 1500);
+            }
             return false;
         }
 
-        if (match.length < 3) {
-            return false;
+        const px = parseInt(match[1]);
+        const py = parseInt(match[2]);
+        const pz = parseInt(match[3]);
+
+        // Save the point for use by dirClick
+        lastPastedPoint = { x: px, y: py, z: pz };
+
+        // Navigate to the point
+        focusPoint(px, py, pz, 2);
+
+        const locationIcon = L.icon({
+            iconUrl: 'imgs_finder/location.png',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24]
+        });
+
+        if (userPin) map.removeLayer(userPin);
+        userPin = L.marker([py, px], {icon: locationIcon}).addTo(map);
+
+        if (btnPaste) {
+            btnPaste.innerHTML = '<i class="fa-solid fa-check"></i>&nbsp;Colado!';
+            btnPaste.style.backgroundColor = '#10b981';
+            btnPaste.style.color = '#ffffff';
+            setTimeout(() => {
+                btnPaste.innerHTML = originalHTML;
+                btnPaste.style.backgroundColor = '';
+                btnPaste.style.color = '';
+            }, 1500);
         }
-      
-        point = {x: parseInt(match[1]), y: parseInt(match[2]), z: parseInt(match[3]), dist: curDist, ang: curDir};
-        point.points = getPoints({x: point.x, y: point.y, z: point.z}, point.ang, point.dist.min, point.dist.max);
-        infos.push(point);
-        updateMarks();
-        listUpdate();
+
         return true;
     } catch (err) {
         console.error(err);
+        if (btnPaste) {
+            btnPaste.innerHTML = '<i class="fa-solid fa-times"></i>&nbsp;Erro ao colar';
+            btnPaste.style.backgroundColor = '#ef4444';
+            btnPaste.style.color = '#ffffff';
+            setTimeout(() => {
+                btnPaste.innerHTML = originalHTML;
+                btnPaste.style.backgroundColor = '';
+                btnPaste.style.color = '';
+            }, 1500);
+        }
         return false;
     }
 }
@@ -254,7 +335,6 @@ function getSquarePoints(pos, dist) {
         {x: pos.x + dist, y: pos.y + dist},
         {x: pos.x - dist, y: pos.y + dist}
     ]
-
     return points;
 }
 
@@ -273,8 +353,7 @@ function getPoints(pos, ang, distMin, distMax) {
 
         if (distMin === 0) {
             pad = 0.5; 
-        }
-        else {
+        } else {
             pad = 0
         }
 
@@ -328,8 +407,7 @@ function listUpdate() {
         let dir_img = null
         if (info.ang === -45) {
             dir_img = 'Center'
-        }
-        else {
+        } else {
             dir_img = directions[info.ang]
         }
         dirbtn.src = `imgs_finder/${dir_img}.png`
@@ -338,7 +416,6 @@ function listUpdate() {
         const delbtn = document.createElement('img');
         delbtn.src = 'imgs_finder/Delete.png'
         delbtn.className = 'del-btn'; 
-        
 
         delbtn.onclick = () => {            
             infos.splice(index, 1);
@@ -360,10 +437,16 @@ function clearList() {
         intersection = {mark: null, center: null, centroid: null, box: null};
     }
 
+    if (userPin) {
+        map.removeLayer(userPin);
+        userPin = null;
+    }
+
+    lastPastedPoint = null;
     listUpdate();
 }
 
-function getPointsToMarkSpawn()  {
+function getPointsToMarkSpawn() {
     if (!intersection.box) {
         return [];
     }
@@ -421,40 +504,35 @@ function calcIntersection() {
 
     intersection = {mark: null, center: null, centroid: null, box: null};
 
-    let curIntersection = null;
-    
-    for (let i =0; i < infos.length; i++) {
+    let polygons = [];
+    for (let i = 0; i < infos.length; i++) {
         let coords = infos[i].points.map(p => [p.x, p.y]);
         coords.push([infos[i].points[0].x, infos[i].points[0].y]);
-
-        let polyTurf = turf.polygon([coords]);
-
-        if (i === 0) {
-            curIntersection = polyTurf;        
-        }
-        else {
-            curIntersection = turf.intersect(curIntersection, polyTurf);
-        }
-
-        if (!curIntersection) {
-            break;
-        }
+        polygons.push(turf.polygon([coords]));
     }
 
-    if (curIntersection) {
-        intersection.box = turf.bbox(curIntersection);
-        const center = turf.center(curIntersection);
-        const centroid = turf.centroid(curIntersection);
-        intersection.center = [center.geometry.coordinates[0], center.geometry.coordinates[1]];
-        intersection.centroid = [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
+    if (polygons.length > 0) {
+        let curIntersection = polygons[0];
+        for (let i = 1; i < polygons.length; i++) {
+            curIntersection = turf.intersect(turf.featureCollection([curIntersection, polygons[i]]));
+            if (!curIntersection) break;
+        }
 
-        intersection.mark = L.geoJSON(curIntersection, {
-            style: {
-                color: '#161761',
-                weight: 2,
-                fillColor: '#161761',
-                fillOpacity: 0.3
-            }
-        });
+        if (curIntersection) {
+            intersection.box = turf.bbox(curIntersection);
+            const center = turf.center(curIntersection);
+            const centroid = turf.centroid(curIntersection);
+            intersection.center = [center.geometry.coordinates[0], center.geometry.coordinates[1]];
+            intersection.centroid = [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
+
+            intersection.mark = L.geoJSON(curIntersection, {
+                style: {
+                    color: '#161761',
+                    weight: 2,
+                    fillColor: '#161761',
+                    fillOpacity: 0.3
+                }
+            });
+        }
     }
 }

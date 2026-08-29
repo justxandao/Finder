@@ -31,8 +31,8 @@ let userPin = null;
 // Stores the last pasted coordinate, used when direction is clicked
 let lastPastedPoint = null;
 
-let limitX = 5000
-let limitY = 7000
+let limitX = 4075
+let limitY = 31478
 
 let curDist = {min: 0, max: 30}
 let curDir = 0
@@ -69,14 +69,14 @@ const floors = {
 }
 
 var bounds = [
-    [2700, 3000],
-    [7000, 7000]
+    [29859, 1584],
+    [31475, 4080]
 ]
 
 const map = L.map('map', {
     crs: CRSPixel,
     fadeAnimation: false,
-    layers: [floors["7"]],
+    layers: [floors["6"]],
     minZoom: -4,
     maxZoom: 4,
     maxBounds: bounds,
@@ -84,11 +84,11 @@ const map = L.map('map', {
     zoomDelta: 1,
     zoomControl: false,
     attributionControl: false
-}).setView([3793, 4098], 2)
+}).setView([30667, 2832], 2)
 
 let spawnsLayer = L.layerGroup().addTo(map);
 
-let curFloor = 7; 
+let curFloor = 6; 
 
 document.getElementById('btn-floor-up').addEventListener('click', () => {
     if (curFloor > 1) changeFloor(curFloor - 1);
