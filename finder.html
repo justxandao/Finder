@@ -1,19 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 
 <head>
-    <title>Finder Kanto</title>
+    <meta charset="UTF-8">
+    <title>PokeXGames Finder</title>
     <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
     <link rel="stylesheet" href="finder.css" />
 </head>
 
 <body>
-    <div class="finder-sidebar">
+    <button id="btn-toggle-list" class="minimap-btn" title="Mostrar/Esconder Lista de Coordenadas"
+        style="position: absolute; top: 15px; left: 10px; z-index: 1000;">
+        <i class="fa-solid fa-list-ul"></i>
+    </button>
+    <div id="coords-display" class="minimap-coords">(X, Y, Z)</div>
+
+    <!-- Sidebar Direita -->
+    <div id="finder-sidebar" class="finder-sidebar">
+        <div id="drag-handle-right" class="drag-handle" title="Segure para arrastar">
+            <i class="fa-solid fa-grip-lines"></i>
+        </div>
+
         <div class="top-widgets">
-            <button id="btn-paste" class="minimap-btn" title="Colar Coordenadas"
-                style="width: auto; padding: 0 10px; border-radius: 16px; flex-grow: 1;"><i
-                    class="fa-solid fa-paste"></i>&nbsp;Colar</button>
+            <button id="btn-paste" class="minimap-btn" title="Colar Coordenadas">
+                <i class="fa-solid fa-location-dot"></i>&nbsp;Coordenada
+            </button>
             <div class="minimap-pin">
                 <input type="checkbox" id="always-on-top" style="display:none;"
                     onchange="window.electronAPI && window.electronAPI.toggleAlwaysOnTop(this.checked)">
@@ -22,8 +34,8 @@
         </div>
 
         <select id="region-selector" class="minimap-select">
-            <option value="finder.html" selected>Kanto</option>
-            <option value="johto_finder.html">Johto</option>
+            <option value="kanto" selected>Kanto</option>
+            <option value="johto">Johto</option>
         </select>
 
         <div class="finder-colors">
@@ -50,9 +62,16 @@
             <button class="dir-btn" onclick="dirClick(2)" title="Sul"><img src="imgs_finder/South.png"></button>
             <button class="dir-btn" onclick="dirClick(1)" title="Sudeste"><img src="imgs_finder/SouthEast.png"></button>
         </div>
+
+        <div class="finder-actions">
+            <button class="action-btn" onclick="undoLast()" title="Desfazer"><i class="fa-solid fa-rotate-left"></i>
+                Desfazer</button>
+            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
+                    alt="Limpar"> Limpar</button>
+        </div>
     </div>
 
-    <div id="coords-display" class="minimap-coords">(X, Y, Z)</div>
+    <!-- Botões da Câmera -->
     <div class="minimap-bottom-bar">
         <button id="btn-floor-up" class="minimap-btn" title="Subir Andar"><i class="fa-solid fa-arrow-up"></i></button>
         <button id="btn-floor-down" class="minimap-btn" title="Descer Andar"><i
@@ -61,11 +80,16 @@
         <button id="btn-zoom-in" class="minimap-btn" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
         <button id="btn-zoom-out" class="minimap-btn" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
     </div>
-    <div class="list-sidebar">
+
+    <!-- Sidebar Esquerda -->
+    <div id="list-sidebar" class="list-sidebar">
+        <div id="drag-handle-left" class="drag-handle" title="Segure para arrastar">
+            <i class="fa-solid fa-grip-lines"></i>
+        </div>
         <div class="finder-list-area">
-            <div id="pos-list"></div>
             <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
                     alt="Limpar"> Limpar</button>
+            <div id="pos-list"></div>
         </div>
     </div>
 
@@ -74,10 +98,10 @@
     <div id="context-menu" class="context-menu" style="display: none;">
         <button id="btn-copy-coord"><i class="fa-solid fa-copy"></i> Copiar: <span id="context-coord"></span></button>
     </div>
-</body>
 
-<script src="node_modules/leaflet/dist/leaflet.js"></script>
-<script src="turf.bundle.js"></script>
-<script src="finder.js"></script>
+    <script src="node_modules/leaflet/dist/leaflet.js"></script>
+    <script src="turf.bundle.js"></script>
+    <script src="finder.js"></script>
+</body>
 
 </html>
