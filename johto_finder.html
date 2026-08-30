@@ -36,19 +36,19 @@
         </div>
 
         <div class="finder-compass">
-            <button class="dir-btn" onclick="dirClick(7)" title="NorteOeste"><img
+            <button class="dir-btn" onclick="dirClick(5)" title="Noroeste"><img
                     src="imgs_finder/NorthWest.png"></button>
             <button class="dir-btn" onclick="dirClick(6)" title="Norte"><img src="imgs_finder/North.png"></button>
-            <button class="dir-btn" onclick="dirClick(5)" title="NordEste"><img
+            <button class="dir-btn" onclick="dirClick(7)" title="Nordeste"><img
                     src="imgs_finder/NorthEast.png"></button>
             <button class="dir-btn" onclick="dirClick(4)" title="Oeste"><img src="imgs_finder/West.png"></button>
             <button class="dir-btn center-dir" onclick="dirClick(-1)" title="Centro"><img
                     src="imgs_finder/Center.png"></button>
             <button class="dir-btn" onclick="dirClick(0)" title="Leste"><img src="imgs_finder/East.png"></button>
-            <button class="dir-btn" onclick="dirClick(3)" title="SudOeste"><img
+            <button class="dir-btn" onclick="dirClick(3)" title="Sudoeste"><img
                     src="imgs_finder/SouthWest.png"></button>
             <button class="dir-btn" onclick="dirClick(2)" title="Sul"><img src="imgs_finder/South.png"></button>
-            <button class="dir-btn" onclick="dirClick(1)" title="SudEste"><img src="imgs_finder/SouthEast.png"></button>
+            <button class="dir-btn" onclick="dirClick(1)" title="Sudeste"><img src="imgs_finder/SouthEast.png"></button>
         </div>
     </div>
 
@@ -61,6 +61,15 @@
         <button id="btn-zoom-in" class="minimap-btn" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
         <button id="btn-zoom-out" class="minimap-btn" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
     </div>
+
+    <div class="list-sidebar">
+        <div class="finder-list-area">
+            <div id="pos-list"></div>
+            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
+                    alt="Limpar"> Limpar</button>
+        </div>
+    </div>
+
     <div id="map"></div>
 
     <div id="context-menu" class="context-menu" style="display: none;">

@@ -448,7 +448,8 @@ function clearList() {
 }
 
 function getPointsToMarkSpawn() {
-    if (!intersection.box) {
+    // A verificação !allSpawnMarks impede o script de travar se o arquivo JSON não existir
+    if (!intersection.box || !allSpawnMarks) {
         return [];
     }
 
