@@ -13,7 +13,7 @@ let allSpawnMarks
 
 async function loadSpawnMarks() {
     try {
-        const response = await fetch('spawn_mark.json');
+        const response = await fetch('spawn_mark_johto.json');
         allSpawnMarks = await response.json();
     } catch (error) {
         console.error("Erro ao carregar o json de SpawnMark:", error)
@@ -34,12 +34,12 @@ let lastPastedPoint = null;
 let limitX = 4075
 let limitY = 31478
 
-let curDist = {min: 0, max: 30}
+let curDist = { min: 0, max: 30 }
 let curDir = 0
 
 let infos = []
 
-let intersection = {mark: null, center: null, centroid: null, box: null};
+let intersection = { mark: null, center: null, centroid: null, box: null };
 
 var CRSPixel = L.Util.extend(L.CRS.Simple, {
     transformation: new L.Transformation(1, 0, 1, 0)
@@ -49,23 +49,24 @@ distButtons = document.querySelectorAll('.color-btn');
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
+// Atualizado para a pasta de tiles de Johto
 const floors = {
-    "1": L.tileLayer('tiles/1/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "2": L.tileLayer('tiles/2/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "3": L.tileLayer('tiles/3/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "4": L.tileLayer('tiles/4/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "5": L.tileLayer('tiles/5/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "6": L.tileLayer('tiles/6/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "7": L.tileLayer('tiles/7/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "8": L.tileLayer('tiles/8/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "9": L.tileLayer('tiles/9/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "10": L.tileLayer('tiles/10/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "11": L.tileLayer('tiles/11/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "12": L.tileLayer('tiles/12/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "13": L.tileLayer('tiles/13/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "14": L.tileLayer('tiles/14/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "15": L.tileLayer('tiles/15/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
-    "16": L.tileLayer('tiles/16/{z}/{x}/{y}.webp', {tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4}),
+    "1": L.tileLayer('tiles_johto/1/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "2": L.tileLayer('tiles_johto/2/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "3": L.tileLayer('tiles_johto/3/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "4": L.tileLayer('tiles_johto/4/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "5": L.tileLayer('tiles_johto/5/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "6": L.tileLayer('tiles_johto/6/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "7": L.tileLayer('tiles_johto/7/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "8": L.tileLayer('tiles_johto/8/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "9": L.tileLayer('tiles_johto/9/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "10": L.tileLayer('tiles_johto/10/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "11": L.tileLayer('tiles_johto/11/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "12": L.tileLayer('tiles_johto/12/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "13": L.tileLayer('tiles_johto/13/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "14": L.tileLayer('tiles_johto/14/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "15": L.tileLayer('tiles_johto/15/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
+    "16": L.tileLayer('tiles_johto/16/{z}/{x}/{y}.webp', { tileSize: 1024, noWrap: true, minNativeZoom: 0, maxNativeZoom: 0, minZoom: -4, maxZoom: 4 }),
 }
 
 var bounds = [
@@ -88,7 +89,7 @@ const map = L.map('map', {
 
 let spawnsLayer = L.layerGroup().addTo(map);
 
-let curFloor = 6; 
+let curFloor = 6;
 
 document.getElementById('btn-floor-up').addEventListener('click', () => {
     if (curFloor > 1) changeFloor(curFloor - 1);
@@ -112,7 +113,7 @@ document.getElementById('btn-center').addEventListener('click', () => {
     } else if (intersection && intersection.center) {
         focusPoint(intersection.center[0], intersection.center[1], curFloor, getZoomLevelFromBox(intersection.box));
     } else {
-        map.setView([3793, 4098], 2);
+        map.setView([30667, 2832], 2);
     }
 });
 
@@ -129,36 +130,36 @@ function changeFloor(novoAndar) {
     markSpawnPoints(points);
 }
 
-map.on('mousemove', function(e) {
+map.on('mousemove', function (e) {
     const x = Math.floor(e.latlng.lng);
     const y = Math.floor(e.latlng.lat);
     display.innerText = `(${x}, ${y}, ${curFloor})`;
 });
 
-map.on('click', function(e) {
+map.on('click', function (e) {
     if (activeSelector) map.removeLayer(activeSelector);
     if (activeCross) map.removeLayer(activeCross);
 
     const x = Math.floor(e.latlng.lng) + 0.5;
-    const y = Math.floor(e.latlng.lat) + 0.5;    
+    const y = Math.floor(e.latlng.lat) + 0.5;
     raio = 0.5
 
     var clickBounds = [
         [y + raio, x + raio],
         [y - raio, x - raio]
     ];
-    
-    activeSelector = L.rectangle(clickBounds, {color: "#333333", weight: 1, fillOpacity: 0, smoothFactor: 0, interactive: false}).addTo(map);
 
-    xMeio = x; 
+    activeSelector = L.rectangle(clickBounds, { color: "#333333", weight: 1, fillOpacity: 0, smoothFactor: 0, interactive: false }).addTo(map);
+
+    xMeio = x;
     yMeio = y;
 
-    const linhaV = L.polyline([[0, xMeio], [limitY, xMeio]], {color: '#333333', weight: 1, interactive: false});
-    const linhaH = L.polyline([[yMeio, 0], [yMeio, limitX]], {color: '#333333', weight: 1, interactive: false});
+    const linhaV = L.polyline([[0, xMeio], [limitY, xMeio]], { color: '#333333', weight: 1, interactive: false });
+    const linhaH = L.polyline([[yMeio, 0], [yMeio, limitX]], { color: '#333333', weight: 1, interactive: false });
     activeCross = L.layerGroup([linhaV, linhaH]).addTo(map);
 });
 
-map.on('contextmenu', function(e) {
+map.on('contextmenu', function (e) {
     const x = Math.floor(e.latlng.lng);
     const y = Math.floor(e.latlng.lat);
     const coordString = `${x}, ${y}, ${curFloor}`;
@@ -193,15 +194,15 @@ function distClick(event, dist) {
     });
 
     event.currentTarget.classList.add('active');
-    switch(dist) {
-        case 0: 
-            curDist = {min: 0, max: 30}
+    switch (dist) {
+        case 0:
+            curDist = { min: 0, max: 30 }
             break
-        case 1: 
-            curDist = {min: 30, max: 500}
+        case 1:
+            curDist = { min: 30, max: 500 }
             break
-        case 2: 
-            curDist = {min: 500, max: Math.max(limitY, limitX)}
+        case 2:
+            curDist = { min: 500, max: Math.max(limitY, limitX) }
             break
     }
 }
@@ -227,7 +228,7 @@ function dirClick(dir) {
         ang: curDir
     };
 
-    point.points = getPoints({x: point.x, y: point.y, z: point.z}, point.ang, point.dist.min, point.dist.max);
+    point.points = getPoints({ x: point.x, y: point.y, z: point.z }, point.ang, point.dist.min, point.dist.max);
     infos.push(point);
     updateMarks();
     listUpdate();
@@ -235,13 +236,13 @@ function dirClick(dir) {
 
 function focusPoint(x, y, z, zoom) {
     if (z !== undefined && z !== curFloor) {
-        changeFloor(z); 
+        changeFloor(z);
     }
 
     x = clamp(x, bounds[0][1], bounds[1][1]);
     y = clamp(y, bounds[0][0], bounds[1][0]);
 
-    map.setView([y, x], zoom); 
+    map.setView([y, x], zoom);
 }
 
 /**
@@ -288,7 +289,7 @@ async function pasteAndFill() {
         });
 
         if (userPin) map.removeLayer(userPin);
-        userPin = L.marker([py, px], {icon: locationIcon}).addTo(map);
+        userPin = L.marker([py, px], { icon: locationIcon }).addTo(map);
 
         if (btnPaste) {
             btnPaste.innerHTML = '<i class="fa-solid fa-check"></i>&nbsp;Colado!';
@@ -330,10 +331,10 @@ function calcDist(x1, y1, x2, y2) {
 
 function getSquarePoints(pos, dist) {
     const points = [
-        {x: pos.x - dist, y: pos.y - dist},
-        {x: pos.x + dist, y: pos.y - dist},
-        {x: pos.x + dist, y: pos.y + dist},
-        {x: pos.x - dist, y: pos.y + dist}
+        { x: pos.x - dist, y: pos.y - dist },
+        { x: pos.x + dist, y: pos.y - dist },
+        { x: pos.x + dist, y: pos.y + dist },
+        { x: pos.x - dist, y: pos.y + dist }
     ]
     return points;
 }
@@ -352,7 +353,7 @@ function getPoints(pos, ang, distMin, distMax) {
         sin = Math.sin(angle);
 
         if (distMin === 0) {
-            pad = 0.5; 
+            pad = 0.5;
         } else {
             pad = 0
         }
@@ -365,11 +366,11 @@ function getPoints(pos, ang, distMin, distMax) {
         y_min = pos.y + (sin * multMin) + pad;
         x_max = pos.x + (cos * multMax);
         y_max = pos.y + (sin * multMax);
-        
-        innerPoints.push({x: x_min, y: y_min});
-        outerPoints.push({x: x_max, y: y_max});
+
+        innerPoints.push({ x: x_min, y: y_min });
+        outerPoints.push({ x: x_max, y: y_max });
     });
-    
+
     const points = [...innerPoints, ...outerPoints.reverse()];
     return points;
 }
@@ -377,7 +378,7 @@ function getPoints(pos, ang, distMin, distMax) {
 function updateMarks() {
     calcIntersection();
 
-    if (intersection.mark) {        
+    if (intersection.mark) {
         intersection.mark.addTo(map);
         focusPoint(intersection.center[0], intersection.center[1], curFloor, getZoomLevelFromBox(intersection.box));
 
@@ -390,15 +391,15 @@ function updateMarks() {
         }
     }
 }
-    
+
 function listUpdate() {
     const listContainer = document.getElementById('pos-list');
-    listContainer.innerHTML = ''; 
+    listContainer.innerHTML = '';
 
     infos.forEach((info, index) => {
         const div = document.createElement('div');
-        div.className = 'pos-item'; 
-        
+        div.className = 'pos-item';
+
         const span = document.createElement('span');
         span.innerText = `${info.x}, ${info.y}, ${info.z} `;
         div.appendChild(span);
@@ -411,13 +412,13 @@ function listUpdate() {
             dir_img = directions[info.ang]
         }
         dirbtn.src = `imgs_finder/${dir_img}.png`
-        dirbtn.className = 'del-btn'; 
+        dirbtn.className = 'del-btn';
 
         const delbtn = document.createElement('img');
         delbtn.src = 'imgs_finder/Delete.png'
-        delbtn.className = 'del-btn'; 
+        delbtn.className = 'del-btn';
 
-        delbtn.onclick = () => {            
+        delbtn.onclick = () => {
             infos.splice(index, 1);
             updateMarks();
             listUpdate();
@@ -434,7 +435,7 @@ function clearList() {
 
     if (intersection.mark) {
         map.removeLayer(intersection.mark);
-        intersection = {mark: null, center: null, centroid: null, box: null};
+        intersection = { mark: null, center: null, centroid: null, box: null };
     }
 
     if (userPin) {
@@ -459,9 +460,9 @@ function getPointsToMarkSpawn() {
         }
 
         return pos.x >= xMin &&
-               pos.x <= xMax &&
-               pos.y >= yMin &&
-               pos.y <= yMax;
+            pos.x <= xMax &&
+            pos.y >= yMin &&
+            pos.y <= yMax;
     });
 }
 
@@ -490,10 +491,10 @@ function getZoomLevelFromBox(bbox) {
     const maxDim = Math.max(width, height);
 
     if (maxDim > 1000) return -1;
-    if (maxDim > 500)  return 0;
-    if (maxDim > 200)  return 1;
-    if (maxDim > 50)   return 2;
-    if (maxDim > 10)   return 3;
+    if (maxDim > 500) return 0;
+    if (maxDim > 200) return 1;
+    if (maxDim > 50) return 2;
+    if (maxDim > 10) return 3;
     return 4;
 }
 
@@ -502,7 +503,7 @@ function calcIntersection() {
         map.removeLayer(intersection.mark);
     }
 
-    intersection = {mark: null, center: null, centroid: null, box: null};
+    intersection = { mark: null, center: null, centroid: null, box: null };
 
     let polygons = [];
     for (let i = 0; i < infos.length; i++) {
@@ -525,14 +526,36 @@ function calcIntersection() {
             intersection.center = [center.geometry.coordinates[0], center.geometry.coordinates[1]];
             intersection.centroid = [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
 
+            // --- INÍCIO DA LÓGICA DE COR ---
+            // Pega a distância máxima do último finder utilizado
+            const lastDistMax = infos[infos.length - 1].dist.max;
+            let maskColor = '#10b981'; // Verde por padrão
+
+            if (lastDistMax <= 30) {
+                maskColor = '#00ff00'; // Verde (Curta Distância)
+            } else if (lastDistMax <= 500) {
+                maskColor = '#ffff00'; // Amarelo (Média Distância)
+            } else {
+                maskColor = '#ff0000'; // Vermelho (Longa Distância)
+            }
+            // --- FIM DA LÓGICA DE COR ---
+
             intersection.mark = L.geoJSON(curIntersection, {
                 style: {
-                    color: '#161761',
+                    color: maskColor,
                     weight: 2,
-                    fillColor: '#161761',
+                    fillColor: maskColor,
                     fillOpacity: 0.3
                 }
             });
         }
     }
+}
+
+// Sistema de navegação entre mapas (Kanto/Johto)
+const regionSelector = document.getElementById('region-selector');
+if (regionSelector) {
+    regionSelector.addEventListener('change', (event) => {
+        window.location.href = event.target.value;
+    });
 }

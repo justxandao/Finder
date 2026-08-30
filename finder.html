@@ -10,7 +10,6 @@
 
 <body>
     <div class="finder-sidebar">
-        <!-- Topo da Sidebar: Colar e Pin -->
         <div class="top-widgets">
             <button id="btn-paste" class="minimap-btn" title="Colar Coordenadas"
                 style="width: auto; padding: 0 10px; border-radius: 16px; flex-grow: 1;"><i
@@ -22,38 +21,26 @@
             </div>
         </div>
 
-        <!-- Seletor de Região -->
-        <select id="region-selector" class="minimap-select" onchange="window.location.href=this.value;">
+        <select id="region-selector" class="minimap-select">
             <option value="finder.html" selected>Kanto</option>
             <option value="johto_finder.html">Johto</option>
         </select>
 
-        <!-- Ferramentas do Finder -->
         <div class="finder-colors">
-            <button class="color-btn green active" onclick="distClick(event, 0)" title="Curta Distância">
-                <img src="imgs_finder/RadarGreen.png" alt="Verde">
-            </button>
-            <button class="color-btn yellow" onclick="distClick(event, 1)" title="Média Distância">
-                <img src="imgs_finder/RadarYellow.png" alt="Amarelo">
-            </button>
-            <button class="color-btn red" onclick="distClick(event, 2)" title="Longa Distância">
-                <img src="imgs_finder/RadarRed.png" alt="Vermelho">
-            </button>
+            <button class="color-btn green active" onclick="distClick(event, 0)" title="Curta Distância"><img
+                    src="imgs_finder/RadarGreen.png" alt="Verde"></button>
+            <button class="color-btn yellow" onclick="distClick(event, 1)" title="Média Distância"><img
+                    src="imgs_finder/RadarYellow.png" alt="Amarelo"></button>
+            <button class="color-btn red" onclick="distClick(event, 2)" title="Longa Distância"><img
+                    src="imgs_finder/RadarRed.png" alt="Vermelho"></button>
         </div>
 
         <div class="finder-compass">
-            <!-- PASSO 1: Botão Noroeste corrigido para enviar o valor 5 (225 graus no JS) -->
-            <button class="dir-btn" onclick="dirClick(5)" title="NorteOeste"><img
+            <button class="dir-btn" onclick="dirClick(7)" title="NorteOeste"><img
                     src="imgs_finder/NorthWest.png"></button>
-
-            <!-- Botão Norte (mantido original) -->
             <button class="dir-btn" onclick="dirClick(6)" title="Norte"><img src="imgs_finder/North.png"></button>
-
-            <!-- PASSO 2: Botão Nordeste corrigido para enviar o valor 7 (315 graus no JS) -->
-            <button class="dir-btn" onclick="dirClick(7)" title="NordEste"><img
+            <button class="dir-btn" onclick="dirClick(5)" title="NordEste"><img
                     src="imgs_finder/NorthEast.png"></button>
-
-            <!-- Botões restantes da bússola mantidos com os valores originais corretos -->
             <button class="dir-btn" onclick="dirClick(4)" title="Oeste"><img src="imgs_finder/West.png"></button>
             <button class="dir-btn center-dir" onclick="dirClick(-1)" title="Centro"><img
                     src="imgs_finder/Center.png"></button>
@@ -62,12 +49,6 @@
                     src="imgs_finder/SouthWest.png"></button>
             <button class="dir-btn" onclick="dirClick(2)" title="Sul"><img src="imgs_finder/South.png"></button>
             <button class="dir-btn" onclick="dirClick(1)" title="SudEste"><img src="imgs_finder/SouthEast.png"></button>
-        </div>
-
-        <div class="finder-list-area">
-            <div id="pos-list"></div>
-            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
-                    alt="Limpar"> Limpar</button>
         </div>
     </div>
 
