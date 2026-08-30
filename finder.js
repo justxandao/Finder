@@ -427,26 +427,38 @@ function markSpawnPoints(points) {
 
     let currentZoom = map.getZoom();
 
-    // Sistema de escala invertida:
-    // Zoom padrão é 2.
-    // Zoom In (> 2) = Ícone menor.
-    // Zoom Out (< 2) = Ícone maior.
+    // Escala de tamanho baseada no zoom
     let size = 32;
     if (currentZoom === 3) size = 24;
     else if (currentZoom >= 4) size = 16;
     else if (currentZoom === 1) size = 48;
     else if (currentZoom === 0) size = 64;
-    else if (currentZoom <= -1) return; // Esconde os Pokémon quando o zoom estiver muito distante para não poluir
+    else if (currentZoom <= -1) return; // Esconde se o zoom estiver muito distante
 
     points.forEach(point => {
         if (!point.pokemon) return;
 
         const capitalizedName = point.pokemon.charAt(0).toUpperCase() + point.pokemon.slice(1);
 
-        // Usamos L.divIcon com "object-fit: contain" para garantir que a imagem nunca estique
+        // Criação do badge circular (bolinha com fundo escuro e borda azul) por baixo do ícone
         const pokemonIcon = L.divIcon({
-            className: '', // Deixa vazio para remover a borda branca padrão do Leaflet
-            html: `<img src="pokemon_icons/${capitalizedName}.png" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.8));">`,
+            className: '',
+            html: `
+                <div style="
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(15, 23, 42, 0.9);
+                    border: 2px solid #3b82f6;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+                    box-sizing: border-box;
+                ">
+                    <img src="pokemon_icons/${capitalizedName}.png" style="width: 70%; height: 70%; object-fit: contain;">
+                </div>
+            `,
             iconSize: [size, size],
             iconAnchor: [size / 2, size / 2]
         });
