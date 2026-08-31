@@ -10,7 +10,22 @@
 </head>
 
 <body>
-    <button id="btn-toggle-list" class="minimap-btn" title="Mostrar/Esconder Lista de Coordenadas"
+    <div id="custom-tooltip" class="custom-tooltip"></div>
+    <div id="toast-container" class="toast-container"></div>
+    
+    <div id="custom-modal-overlay" class="custom-modal-overlay">
+        <div id="custom-modal" class="custom-modal">
+            <h3 id="custom-modal-title">Título</h3>
+            <p id="custom-modal-message">Mensagem do modal</p>
+            <input type="text" id="custom-modal-input" placeholder="Digite aqui..." style="display: none;">
+            <div class="custom-modal-buttons">
+                <button id="custom-modal-btn-cancel" class="modal-btn cancel">Cancelar</button>
+                <button id="custom-modal-btn-confirm" class="modal-btn confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="btn-toggle-list" class="minimap-btn" data-tooltip="Mostrar/Esconder Lista de Coordenadas"
         style="position: absolute; top: 15px; left: 10px; z-index: 1000;">
         <i class="fa-solid fa-list-ul"></i>
     </button>
@@ -18,76 +33,82 @@
 
     <!-- Sidebar Direita -->
     <div id="finder-sidebar" class="finder-sidebar">
-        <div id="drag-handle-right" class="drag-handle" title="Segure para arrastar">
+        <div id="drag-handle-right" class="drag-handle" data-tooltip="Segure para arrastar">
             <i class="fa-solid fa-grip-lines"></i>
         </div>
 
         <div class="top-widgets">
-            <button id="btn-paste" class="minimap-btn" title="Colar Coordenadas">
-                <i class="fa-solid fa-location-dot"></i>&nbsp;Coordenada
+            <button id="btn-paste" class="minimap-btn" data-tooltip="Colar Coordenadas">
+                <i class="fa-solid fa-location-dot"></i>
             </button>
-            <div class="minimap-pin">
+            <div class="minimap-pin" style="margin-left: auto;">
                 <input type="checkbox" id="always-on-top" style="display:none;"
                     onchange="window.electronAPI && window.electronAPI.toggleAlwaysOnTop(this.checked)">
-                <label for="always-on-top" title="Fixar no Topo"><i class="fa-solid fa-thumbtack"></i></label>
+                <label for="always-on-top" data-tooltip="Fixar no Topo"><i class="fa-solid fa-thumbtack"></i></label>
             </div>
         </div>
 
-        <select id="region-selector" class="minimap-select">
-            <option value="kanto" selected>Kanto</option>
-            <option value="johto">Johto</option>
-        </select>
+        <div class="region-row" style="display: flex; gap: 10px; align-items: center;">
+            <select id="region-selector" class="minimap-select" style="flex: 1;">
+                <option value="kanto" selected>Kanto</option>
+                <option value="johto">Johto</option>
+            </select>
+            <div class="home-toggle">
+                <input type="checkbox" id="home-toggle-checkbox" style="display:none;" onchange="toggleHome(this.checked)">
+                <label for="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo: Ao ligar, você poderá colar a coordenada inicial. Quando limpar o radar, a câmera voltará para ela."><i class="fa-solid fa-anchor"></i></label>
+            </div>
+        </div>
 
         <div class="finder-colors">
-            <button class="color-btn green active" onclick="distClick(event, 0)" title="Curta Distância"><img
+            <button class="color-btn green active" onclick="distClick(event, 0)" data-tooltip="Curta Distância"><img
                     src="imgs_finder/RadarGreen.png" alt="Verde"></button>
-            <button class="color-btn yellow" onclick="distClick(event, 1)" title="Média Distância"><img
+            <button class="color-btn yellow" onclick="distClick(event, 1)" data-tooltip="Média Distância"><img
                     src="imgs_finder/RadarYellow.png" alt="Amarelo"></button>
-            <button class="color-btn red" onclick="distClick(event, 2)" title="Longa Distância"><img
+            <button class="color-btn red" onclick="distClick(event, 2)" data-tooltip="Longa Distância"><img
                     src="imgs_finder/RadarRed.png" alt="Vermelho"></button>
         </div>
 
         <div class="finder-compass">
-            <button class="dir-btn" onclick="dirClick(5)" title="Noroeste"><img
+            <button class="dir-btn" onclick="dirClick(5)" data-tooltip="Noroeste"><img
                     src="imgs_finder/NorthWest.png"></button>
-            <button class="dir-btn" onclick="dirClick(6)" title="Norte"><img src="imgs_finder/North.png"></button>
-            <button class="dir-btn" onclick="dirClick(7)" title="Nordeste"><img
+            <button class="dir-btn" onclick="dirClick(6)" data-tooltip="Norte"><img src="imgs_finder/North.png"></button>
+            <button class="dir-btn" onclick="dirClick(7)" data-tooltip="Nordeste"><img
                     src="imgs_finder/NorthEast.png"></button>
-            <button class="dir-btn" onclick="dirClick(4)" title="Oeste"><img src="imgs_finder/West.png"></button>
-            <button class="dir-btn center-dir" onclick="dirClick(-1)" title="Centro"><img
+            <button class="dir-btn" onclick="dirClick(4)" data-tooltip="Oeste"><img src="imgs_finder/West.png"></button>
+            <button class="dir-btn center-dir" onclick="dirClick(-1)" data-tooltip="Centro"><img
                     src="imgs_finder/Center.png"></button>
-            <button class="dir-btn" onclick="dirClick(0)" title="Leste"><img src="imgs_finder/East.png"></button>
-            <button class="dir-btn" onclick="dirClick(3)" title="Sudoeste"><img
+            <button class="dir-btn" onclick="dirClick(0)" data-tooltip="Leste"><img src="imgs_finder/East.png"></button>
+            <button class="dir-btn" onclick="dirClick(3)" data-tooltip="Sudoeste"><img
                     src="imgs_finder/SouthWest.png"></button>
-            <button class="dir-btn" onclick="dirClick(2)" title="Sul"><img src="imgs_finder/South.png"></button>
-            <button class="dir-btn" onclick="dirClick(1)" title="Sudeste"><img src="imgs_finder/SouthEast.png"></button>
+            <button class="dir-btn" onclick="dirClick(2)" data-tooltip="Sul"><img src="imgs_finder/South.png"></button>
+            <button class="dir-btn" onclick="dirClick(1)" data-tooltip="Sudeste"><img src="imgs_finder/SouthEast.png"></button>
         </div>
 
         <div class="finder-actions">
-            <button class="action-btn" onclick="undoLast()" title="Desfazer"><i class="fa-solid fa-rotate-left"></i>
+            <button class="action-btn" onclick="undoLast()" data-tooltip="Desfazer Último"><i class="fa-solid fa-rotate-left"></i>
                 Desfazer</button>
-            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
+            <button class="clear-btn" onclick="clearList()" data-tooltip="Limpar Mapa e Lista"><img src="imgs_finder/Clear.png"
                     alt="Limpar"> Limpar</button>
         </div>
     </div>
 
     <!-- Botões da Câmera -->
     <div class="minimap-bottom-bar">
-        <button id="btn-floor-up" class="minimap-btn" title="Subir Andar"><i class="fa-solid fa-arrow-up"></i></button>
-        <button id="btn-floor-down" class="minimap-btn" title="Descer Andar"><i
+        <button id="btn-floor-up" class="minimap-btn" data-tooltip="Subir Andar"><i class="fa-solid fa-arrow-up"></i></button>
+        <button id="btn-floor-down" class="minimap-btn" data-tooltip="Descer Andar"><i
                 class="fa-solid fa-arrow-down"></i></button>
-        <button id="btn-center" class="minimap-btn" title="Centralizar"><i class="fa-solid fa-crosshairs"></i></button>
-        <button id="btn-zoom-in" class="minimap-btn" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
-        <button id="btn-zoom-out" class="minimap-btn" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+        <button id="btn-center" class="minimap-btn" data-tooltip="Centralizar"><i class="fa-solid fa-crosshairs"></i></button>
+        <button id="btn-zoom-in" class="minimap-btn" data-tooltip="Zoom In"><i class="fa-solid fa-plus"></i></button>
+        <button id="btn-zoom-out" class="minimap-btn" data-tooltip="Zoom Out"><i class="fa-solid fa-minus"></i></button>
     </div>
 
     <!-- Sidebar Esquerda -->
     <div id="list-sidebar" class="list-sidebar">
-        <div id="drag-handle-left" class="drag-handle" title="Segure para arrastar">
+        <div id="drag-handle-left" class="drag-handle" data-tooltip="Segure para arrastar">
             <i class="fa-solid fa-grip-lines"></i>
         </div>
         <div class="finder-list-area">
-            <button class="clear-btn" onclick="clearList()" title="Limpar"><img src="imgs_finder/Clear.png"
+            <button class="clear-btn" onclick="clearList()" data-tooltip="Limpar Mapa e Lista"><img src="imgs_finder/Clear.png"
                     alt="Limpar"> Limpar</button>
             <div id="pos-list"></div>
         </div>

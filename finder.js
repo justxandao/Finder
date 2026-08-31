@@ -32,7 +32,7 @@ async function loadSpawnMarks() {
             ['kanto', 'johto'].forEach(region => {
                 if (pokemonData.spawns && pokemonData.spawns[region]) {
                     pokemonData.spawns[region].forEach(c => {
-                        allSpawnMarks[region].push({ x: c[0], y: c[1], z: c[2], pokemon: pokemonName });
+                        allSpawnMarks[region].push({ x: c[0] + 1, y: c[1] + 1, z: c[2], pokemon: pokemonName });
                     });
                 }
             });
@@ -83,6 +83,47 @@ let activeCross = null;
 let userPin = null;
 let lastPastedPoint = null;
 
+let homePoints = JSON.parse(localStorage.getItem('finderHomePoints')) || { kanto: null, johto: null };
+let isHomeToggleActive = localStorage.getItem('finderHomeToggle') === 'true';
+
+window.addEventListener('DOMContentLoaded', () => {
+    const toggleCheckbox = document.getElementById('home-toggle-checkbox');
+    if (toggleCheckbox) toggleCheckbox.checked = isHomeToggleActive;
+});
+
+window.toggleHome = function(isActive) {
+    isHomeToggleActive = isActive;
+    localStorage.setItem('finderHomeToggle', isActive);
+    
+    if (isActive) {
+        showCustomPrompt(`Cole a coordenada fixa para a região ${currentRegion.toUpperCase()} (ex: 1000, 2000, 7):`, 'Configurar Âncora', (input) => {
+            if (!input) {
+                document.getElementById('home-toggle-checkbox').checked = false;
+                isHomeToggleActive = false;
+                localStorage.setItem('finderHomeToggle', false);
+                return;
+            }
+
+            const regex = /(?:X[:\s]*)?(\d+)[^0-9]+(?:Y[:\s]*)?(\d+)[^0-9]+(?:Z[:\s]*)?(\d+)/i;
+            const match = input.match(regex);
+
+            if (!match || match.length < 4) {
+                showCustomAlert("Coordenada inválida! Tente colar no formato X: 1000, Y: 2000, Z: 7", "Erro de Formato");
+                document.getElementById('home-toggle-checkbox').checked = false;
+                isHomeToggleActive = false;
+                localStorage.setItem('finderHomeToggle', false);
+                return;
+            }
+
+            const px = parseInt(match[1]); const py = parseInt(match[2]); const pz = parseInt(match[3]);
+            homePoints[currentRegion] = { x: px + 1, y: py + 1, z: pz };
+            localStorage.setItem('finderHomePoints', JSON.stringify(homePoints));
+            
+            showToast("Coordenada fixa salva com sucesso!", "success");
+        });
+    }
+};
+
 let limitX = regionConfigs[currentRegion].limitX;
 let limitY = regionConfigs[currentRegion].limitY;
 let curDist = { min: 0, max: 30 };
@@ -113,11 +154,6 @@ let spawnsLayer = L.layerGroup().addTo(map);
 
 map.on('zoomend', function () {
     const z = map.getZoom();
-    if (z < 2) {
-        document.getElementById('map').classList.add('zoom-out');
-    } else {
-        document.getElementById('map').classList.remove('zoom-out');
-    }
 
     if (intersection.mark && infos.length > 0) {
         const lastDistMax = infos[infos.length - 1].dist.max;
@@ -177,18 +213,8 @@ function resetPasteButton() {
 }
 
 function triggerPasteFeedback(isSuccess, message) {
-    const btnPaste = document.getElementById('btn-paste');
-    if (!btnPaste) return;
-    if (pasteTimeout) clearTimeout(pasteTimeout);
-
-    if (isSuccess) {
-        btnPaste.innerHTML = `<i class="fa-solid fa-check"></i>&nbsp;${message}`;
-        btnPaste.style.backgroundColor = '#10b981'; btnPaste.style.color = '#ffffff';
-    } else {
-        btnPaste.innerHTML = `<i class="fa-solid fa-times"></i>&nbsp;${message}`;
-        btnPaste.style.backgroundColor = '#ef4444'; btnPaste.style.color = '#ffffff';
-    }
-    pasteTimeout = setTimeout(resetPasteButton, 1500);
+    if (isSuccess) showToast(message, "success");
+    else showToast(message, "error");
 }
 
 function changeFloor(novoAndar) {
@@ -196,12 +222,12 @@ function changeFloor(novoAndar) {
     map.removeLayer(floors[currentRegion][curFloor]);
     curFloor = novoAndar;
     floors[currentRegion][curFloor].addTo(map);
-    markSpawnPoints(getPointsToMarkSpawn());
+    updateMarks();
 }
 
 map.on('mousemove', function (e) {
-    const x = Math.floor(e.latlng.lng);
-    const y = Math.floor(e.latlng.lat);
+    const x = Math.floor(e.latlng.lng) - 1;
+    const y = Math.floor(e.latlng.lat) - 1;
     display.innerText = `(${x}, ${y}, ${curFloor})`;
 });
 
@@ -225,7 +251,7 @@ map.on('click', function (e) {
     if (userPin) map.removeLayer(userPin);
     userPin = L.marker([intY, intX], { icon: locationIcon }).addTo(map);
 
-    const coordString = `${intX}, ${intY}, ${curFloor}`;
+    const coordString = `${intX - 1}, ${intY - 1}, ${curFloor}`;
     navigator.clipboard.writeText(coordString).then(() => {
         triggerPasteFeedback(true, 'Copiado!');
     }).catch(err => console.error(err));
@@ -233,7 +259,7 @@ map.on('click', function (e) {
 
 map.on('contextmenu', function (e) {
     const x = Math.floor(e.latlng.lng); const y = Math.floor(e.latlng.lat);
-    const coordString = `${x}, ${y}, ${curFloor}`;
+    const coordString = `${x - 1}, ${y - 1}, ${curFloor}`;
 
     const contextMenu = document.getElementById('context-menu');
     const contextCoord = document.getElementById('context-coord');
@@ -262,22 +288,34 @@ function distClick(event, dist) {
         case 1: curDist = { min: 30, max: 500 }; break;
         case 2: curDist = { min: 500, max: Math.max(limitY, limitX) }; break;
     }
+
+    if (infos.length > 0 && lastPastedPoint) {
+        const last = infos[infos.length - 1];
+        if (last.x === lastPastedPoint.x && last.y === lastPastedPoint.y && last.z === lastPastedPoint.z) {
+            last.dist = curDist;
+            last.points = getPoints({ x: last.x, y: last.y, z: last.z }, last.ang, last.dist.min, last.dist.max);
+            updateMarks(); listUpdate();
+        }
+    }
 }
 
 function dirClick(dir) {
+    document.querySelectorAll('.dir-btn').forEach(btn => btn.classList.remove('active-dir'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('active-dir');
+
     curDir = dir * 45;
     if (!lastPastedPoint) {
-        alert("Cole uma coordenada primeiro usando o botão Coordenada ou clicando no mapa!");
+        showCustomAlert("Cole uma coordenada primeiro usando o botão de pino ou clicando no mapa!", "Atenção");
         return;
     }
 
     const point = { x: lastPastedPoint.x, y: lastPastedPoint.y, z: lastPastedPoint.z, dist: curDist, ang: curDir };
     point.points = getPoints({ x: point.x, y: point.y, z: point.z }, point.ang, point.dist.min, point.dist.max);
 
-    // Substitui se for a mesma coordenada e cor (trocando só a direção)
+    // Substitui se for a mesma coordenada (trocando só a direção ou atualizando)
     if (infos.length > 0) {
         const last = infos[infos.length - 1];
-        if (last.x === point.x && last.y === point.y && last.z === point.z && last.dist.max === point.dist.max) {
+        if (last.x === point.x && last.y === point.y && last.z === point.z) {
             infos.pop();
         }
     }
@@ -312,12 +350,13 @@ async function pasteAndFill() {
         }
 
         const px = parseInt(match[1]); const py = parseInt(match[2]); const pz = parseInt(match[3]);
-        lastPastedPoint = { x: px, y: py, z: pz };
-        focusPoint(px, py, pz, map.getZoom());
+        const mapX = px + 1; const mapY = py + 1;
+        lastPastedPoint = { x: mapX, y: mapY, z: pz };
+        focusPoint(mapX, mapY, pz, map.getZoom());
 
         const locationIcon = L.icon({ iconUrl: 'imgs_finder/location.png', iconSize: [24, 24], iconAnchor: [12, 24] });
         if (userPin) map.removeLayer(userPin);
-        userPin = L.marker([py, px], { icon: locationIcon }).addTo(map);
+        userPin = L.marker([mapY, mapX], { icon: locationIcon }).addTo(map);
 
         triggerPasteFeedback(true, 'Colado!');
         return true;
@@ -356,35 +395,107 @@ function getPoints(pos, ang, distMin, distMax) {
     return [...innerPoints, ...outerPoints.reverse()];
 }
 
+function pixelatePolygon(poly) {
+    const coords = poly.geometry.coordinates[0];
+    const newCoords = [];
+    
+    for (let i = 0; i < coords.length - 1; i++) {
+        let p1 = coords[i];
+        let p2 = coords[i+1];
+        
+        let x1 = Math.round(p1[0]);
+        let y1 = Math.round(p1[1]);
+        let x2 = Math.round(p2[0]);
+        let y2 = Math.round(p2[1]);
+        
+        newCoords.push([x1, y1]);
+        
+        let dx = Math.abs(x2 - x1);
+        let dy = Math.abs(y2 - y1);
+        let sx = (x1 < x2) ? 1 : -1;
+        let sy = (y1 < y2) ? 1 : -1;
+        let err = dx - dy;
+        
+        while (x1 !== x2 || y1 !== y2) {
+            let e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x1 += sx;
+                newCoords.push([x1, y1]);
+            }
+            if (e2 < dx) {
+                err += dx;
+                y1 += sy;
+                newCoords.push([x1, y1]);
+            }
+        }
+    }
+    
+    if (newCoords.length > 0 && 
+        (newCoords[0][0] !== newCoords[newCoords.length-1][0] || 
+         newCoords[0][1] !== newCoords[newCoords.length-1][1])) {
+        newCoords.push([newCoords[0][0], newCoords[0][1]]);
+    }
+    
+    // Fallback just in case
+    if (newCoords.length < 4) return poly;
+    
+    return turf.polygon([newCoords]);
+}
+
+function sqr(x) { return x * x; }
+function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y); }
+function distToSegmentSquared(p, v, w) {
+    let l2 = dist2(v, w);
+    if (l2 === 0) return dist2(p, v);
+    let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return dist2(p, { x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y) });
+}
+function pointToPolygonDist(px, py, poly) {
+    const coords = poly.geometry.coordinates[0];
+    let minDist = Infinity;
+    let p = { x: px, y: py };
+    for (let i = 0; i < coords.length - 1; i++) {
+        let v = { x: coords[i][0], y: coords[i][1] };
+        let w = { x: coords[i+1][0], y: coords[i+1][1] };
+        let d2 = distToSegmentSquared(p, v, w);
+        if (d2 < minDist) minDist = d2;
+    }
+    return Math.sqrt(minDist);
+}
+
 function updateMarks() {
     calcIntersection();
     if (intersection.mark) {
         intersection.mark.addTo(map);
-        const lastDistMax = infos.length > 0 ? infos[infos.length - 1].dist.max : 0;
-
-        // Exibe Pokémons estritamente quando o Finder for o verde (dist <= 30)
-        if (lastDistMax <= 30) markSpawnPoints(getPointsToMarkSpawn());
-        else spawnsLayer.clearLayers();
+        
+        if (intersection.polygon) {
+            const [xMin, yMin, xMax, yMax] = intersection.box;
+            const width = xMax - xMin;
+            const height = yMax - yMin;
+            if (width <= 60 && height <= 60) markSpawnPoints(getPointsToMarkSpawn());
+            else spawnsLayer.clearLayers();
+        } else {
+            spawnsLayer.clearLayers();
+        }
     } else { spawnsLayer.clearLayers(); }
 }
 
 function listUpdate() {
-    const listContainer = document.getElementById('pos-list');
-    listContainer.innerHTML = '';
+    const list = document.getElementById('pos-list');
+    list.innerHTML = '';
 
     infos.forEach((info, index) => {
         const div = document.createElement('div');
         div.className = 'pos-item';
 
-        let bgColor = 'rgba(16, 185, 129, 0.4)'; // Verde Translúcido
-        if (info.dist.max > 30 && info.dist.max <= 500) bgColor = 'rgba(234, 179, 8, 0.4)'; // Amarelo
-        else if (info.dist.max > 500) bgColor = 'rgba(239, 68, 68, 0.4)'; // Vermelho
-
+        let bgColor = info.dist.max <= 30 ? 'rgba(34, 197, 94, 0.4)' : info.dist.max <= 500 ? 'rgba(234, 179, 8, 0.4)' : 'rgba(239, 68, 68, 0.4)';
         div.style.backgroundColor = bgColor;
         div.style.borderColor = bgColor.replace('0.4', '0.8');
 
         const span = document.createElement('span');
-        span.innerText = `${info.x}, ${info.y}, ${info.z} `;
+        span.innerText = `${info.x - 1}, ${info.y - 1}, ${info.z} `;
         div.appendChild(span);
 
         const dirbtn = document.createElement('img');
@@ -396,9 +507,117 @@ function listUpdate() {
         delbtn.className = 'del-btn';
         delbtn.onclick = () => { infos.splice(index, 1); updateMarks(); listUpdate(); };
 
-        div.appendChild(dirbtn); div.appendChild(delbtn); listContainer.appendChild(div);
+        div.appendChild(dirbtn); div.appendChild(delbtn); list.appendChild(div);
     });
 }
+
+// =========================================
+// CUSTOM UI CONTROLLERS
+// =========================================
+
+// Toasts
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+    toast.innerText = message;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+}
+
+// Modals
+let activePromptCallback = null;
+
+function showCustomAlert(message, title = 'Aviso') {
+    document.getElementById('custom-modal-title').innerText = title;
+    document.getElementById('custom-modal-message').innerText = message;
+    document.getElementById('custom-modal-input').style.display = 'none';
+    document.getElementById('custom-modal-btn-cancel').style.display = 'none';
+    document.getElementById('custom-modal-btn-confirm').innerText = 'OK';
+    
+    activePromptCallback = null;
+    document.getElementById('custom-modal-overlay').classList.add('visible');
+}
+
+function showCustomPrompt(message, title, callback) {
+    document.getElementById('custom-modal-title').innerText = title;
+    document.getElementById('custom-modal-message').innerText = message;
+    
+    const input = document.getElementById('custom-modal-input');
+    input.style.display = 'block';
+    input.value = '';
+    
+    document.getElementById('custom-modal-btn-cancel').style.display = 'block';
+    document.getElementById('custom-modal-btn-confirm').innerText = 'Confirmar';
+    
+    activePromptCallback = callback;
+    document.getElementById('custom-modal-overlay').classList.add('visible');
+    input.focus();
+}
+
+function closeModal(isConfirm) {
+    document.getElementById('custom-modal-overlay').classList.remove('visible');
+    if (activePromptCallback) {
+        if (isConfirm) {
+            activePromptCallback(document.getElementById('custom-modal-input').value);
+        } else {
+            activePromptCallback(null);
+        }
+        activePromptCallback = null;
+    }
+}
+
+document.getElementById('custom-modal-btn-cancel').addEventListener('click', () => closeModal(false));
+document.getElementById('custom-modal-btn-confirm').addEventListener('click', () => closeModal(true));
+document.getElementById('custom-modal-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') closeModal(true);
+});
+
+// Tooltips Customizados
+document.addEventListener('DOMContentLoaded', () => {
+    const tooltip = document.getElementById('custom-tooltip');
+    
+    document.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('[data-tooltip]');
+        if (!target) return;
+        
+        const text = target.getAttribute('data-tooltip');
+        tooltip.innerText = text;
+        
+        const rect = target.getBoundingClientRect();
+        tooltip.classList.add('visible');
+        
+        // Posição baseada no elemento
+        let top = rect.bottom + 8;
+        let left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2);
+        
+        // Evita sair da tela
+        if (left < 5) left = 5;
+        if (left + tooltip.offsetWidth > window.innerWidth - 5) {
+            left = window.innerWidth - tooltip.offsetWidth - 5;
+        }
+        if (top + tooltip.offsetHeight > window.innerHeight - 5) {
+            top = rect.top - tooltip.offsetHeight - 8;
+        }
+        
+        tooltip.style.left = left + 'px';
+        tooltip.style.top = top + 'px';
+    });
+    
+    document.addEventListener('mouseout', (e) => {
+        const target = e.target.closest('[data-tooltip]');
+        if (target) {
+            tooltip.classList.remove('visible');
+        }
+    });
+});
 
 function clearList() {
     infos = [];
@@ -408,18 +627,40 @@ function clearList() {
     }
     spawnsLayer.clearLayers();
     listUpdate();
+
+    if (isHomeToggleActive && homePoints[currentRegion]) {
+        const hp = homePoints[currentRegion];
+        lastPastedPoint = { ...hp };
+        focusPoint(hp.x, hp.y, hp.z, map.getZoom());
+        const locationIcon = L.icon({ iconUrl: 'imgs_finder/location.png', iconSize: [24, 24], iconAnchor: [12, 24] });
+        if (userPin) map.removeLayer(userPin);
+        userPin = L.marker([hp.y, hp.x], { icon: locationIcon }).addTo(map);
+    }
 }
 
 function getPointsToMarkSpawn() {
     if (!intersection.polygon || !allSpawnMarks[currentRegion]) return [];
 
     const [xMin, yMin, xMax, yMax] = intersection.box;
+    const margin = 8; // Distância de tolerância para os com borda vermelha
 
-    return allSpawnMarks[currentRegion].filter(pos => {
-        if (pos.z !== curFloor || pos.x < xMin || pos.x > xMax || pos.y < yMin || pos.y > yMax) return false;
-        // Filtro Exato do Polígono Matemático (Garante que só puxe o que está estritamente dentro da área colorida)
-        return turf.booleanPointInPolygon(turf.point([pos.x + 0.5, pos.y + 0.5]), intersection.polygon);
-    });
+    return allSpawnMarks[currentRegion]
+        .map(pos => {
+            if (pos.z !== curFloor) return null;
+            if (pos.x < xMin - margin || pos.x > xMax + margin || pos.y < yMin - margin || pos.y > yMax + margin) return null;
+
+            const isInside = turf.booleanPointInPolygon(turf.point([pos.x + 0.5, pos.y + 0.5]), intersection.polygon);
+            if (isInside) {
+                return { ...pos, status: 'inside' };
+            } else {
+                const dist = pointToPolygonDist(pos.x + 0.5, pos.y + 0.5, intersection.polygon);
+                if (dist <= margin) {
+                    return { ...pos, status: 'near' };
+                }
+            }
+            return null;
+        })
+        .filter(p => p !== null);
 }
 
 function markSpawnPoints(points) {
@@ -429,26 +670,32 @@ function markSpawnPoints(points) {
 
     // Escala de tamanho baseada no zoom
     let size = 32;
-    if (currentZoom === 3) size = 24;
-    else if (currentZoom >= 4) size = 16;
-    else if (currentZoom === 1) size = 48;
-    else if (currentZoom === 0) size = 64;
-    else if (currentZoom <= -1) return; // Esconde se o zoom estiver muito distante
+    if (currentZoom >= 3) size = 24;
+    if (currentZoom >= 4) size = 16;
+    
+    if (currentZoom <= -1) return; // Esconde se o zoom estiver muito distante
 
     points.forEach(point => {
         if (!point.pokemon) return;
 
         const capitalizedName = point.pokemon.charAt(0).toUpperCase() + point.pokemon.slice(1);
 
-        // Criação do badge circular (bolinha com fundo escuro e borda azul) por baixo do ícone
+        let borderColor = '#3b82f6';
+        let bgColor = 'rgba(15, 23, 42, 0.9)';
+        if (point.status === 'near') {
+            borderColor = '#ef4444';
+            bgColor = 'rgba(60, 15, 15, 0.9)';
+        }
+
+        // Criação do badge circular (bolinha com fundo escuro e borda azul ou vermelha) por baixo do ícone
         const pokemonIcon = L.divIcon({
             className: '',
             html: `
                 <div style="
                     width: 100%;
                     height: 100%;
-                    background-color: rgba(15, 23, 42, 0.9);
-                    border: 2px solid #3b82f6;
+                    background-color: ${bgColor};
+                    border: 2px solid ${borderColor};
                     border-radius: 50%;
                     display: flex;
                     align-items: center;
@@ -506,7 +753,9 @@ function calcIntersection() {
             const lastDistMax = infos[infos.length - 1].dist.max;
             let maskColor = lastDistMax <= 30 ? '#00ff00' : lastDistMax <= 500 ? '#ffff00' : '#ff0000';
 
-            intersection.mark = L.geoJSON(curIntersection, {
+            const pixelated = pixelatePolygon(curIntersection);
+
+            intersection.mark = L.geoJSON(pixelated, {
                 style: { color: maskColor, weight: 2, fillColor: maskColor, fillOpacity: 0.3 }
             });
         }
