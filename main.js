@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let mainWindow;
 
@@ -44,3 +45,31 @@ ipcMain.on('toggle-always-on-top', (event, isAlwaysOnTop) => {
     win.setAlwaysOnTop(isAlwaysOnTop);
   }
 });
+
+// Salvar arquivos CSV na pasta 'planilhas' do projeto
+ipcMain.handle('save-csv-file', async (event, { filename, content }) => {
+  try {
+    const dir = path.join(__dirname, 'planilhas');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const filePath = path.join(dir, filename);
+    // Grava com UTF-8 BOM para abrir perfeitamente no Excel
+    fs.writeFileSync(filePath, '\uFEFF' + content, 'utf8');
+    return { success: true, filePath };
+  } catch (err) {
+    console.error('Erro ao salvar CSV:', err);
+    return { success: false, error: err.message };
+  }
+});
+
+// Abrir pasta de planilhas no Explorer
+ipcMain.handle('open-csv-folder', async () => {
+  const dir = path.join(__dirname, 'planilhas');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  shell.openPath(dir);
+  return true;
+});
+
