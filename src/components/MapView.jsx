@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, LayerGroup, useMapEvents, GeoJSON } from 'react-leaflet';
 import L from 'leaflet';
 import useStore from '../store/useStore';
+import * as turf from '@turf/turf';
 import { calcIntersection } from '../utils/geometry';
 import 'leaflet/dist/leaflet.css';
 
@@ -70,9 +71,19 @@ export default function MapView() {
     // Calcular spawns ativos
     const activeSpawns = useMemo(() => {
         if (!showSpawnsSetting) return [];
+        if (!intersectionData || !intersectionData.polygon) return [];
+        
         const spawns = allSpawnMarks[currentRegion] || [];
-        return spawns.filter(spawn => spawn.z === curFloor);
-    }, [showSpawnsSetting, allSpawnMarks, currentRegion, curFloor]);
+        const floorSpawns = spawns.filter(spawn => spawn.z === curFloor);
+        
+        return floorSpawns.filter(spawn => {
+            try {
+                return turf.booleanPointInPolygon(turf.point([spawn.x, spawn.y]), intersectionData.polygon);
+            } catch (e) {
+                return false;
+            }
+        });
+    }, [showSpawnsSetting, allSpawnMarks, currentRegion, curFloor, intersectionData]);
     // Crosshair and User Pin logic
     const limitX = regionConfigs[currentRegion].limitX;
     const limitY = regionConfigs[currentRegion].limitY;

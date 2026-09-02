@@ -4,12 +4,10 @@ import MapView from './components/MapView';
 import RightSidebar from './components/RightSidebar';
 import LeftSidebar from './components/LeftSidebar';
 import SettingsDrawer from './components/SettingsDrawer';
-import PlacesDrawer from './components/PlacesDrawer';
 import BiDashboard from './components/BiDashboard';
+import RegisterModal from './components/RegisterModal';
 import Login from './components/Login';
 import { supabase } from './supabaseClient';
-import { check } from '@tauri-apps/plugin-updater';
-import { ask, message } from '@tauri-apps/plugin-dialog';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -21,41 +19,11 @@ function App() {
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    // Carregar sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setInitializing(false);
-    });
+    // Carregar sessão inicial (Login desativado temporariamente)
+    setSession({ user: { id: 'dev-mode' } });
+    setInitializing(false);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    // Checar atualizações
-    async function checkForUpdates() {
-      try {
-        const update = await check();
-        if (update) {
-          const yes = await ask(`A nova versão ${update.version} está disponível! Deseja instalar agora?`, {
-            title: 'Atualização Disponível',
-            kind: 'info',
-          });
-          if (yes) {
-            await update.downloadAndInstall();
-            await message('Atualização concluída! O aplicativo será reiniciado.', { title: 'Sucesso', kind: 'info' });
-          }
-        }
-      } catch (error) {
-        console.error("Erro ao buscar atualizações:", error);
-      }
-    }
-    
-    // Pequeno atraso para não travar a UI inicial
-    setTimeout(() => {
-        checkForUpdates();
-    }, 3000);
-
-    return () => subscription.unsubscribe();
+    // No need to unsubscribe since auth listener is removed
   }, [setSession]);
 
   useEffect(() => {
@@ -112,13 +80,6 @@ function App() {
               <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('isHomeToggleActive', e.target.checked)} />
               <label htmlFor="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo"><i className="fa-solid fa-anchor"></i></label>
           </div>
-          <div style={{ width: '1px', height: '20px', background: 'rgba(255, 255, 255, 0.2)', margin: '0 4px' }}></div>
-          <div className="tracker-item" data-tooltip="Finders usados nesta busca" style={{ fontSize: '11px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <i className="fa-solid fa-satellite-dish" style={{ color: '#38bdf8' }}></i> <span style={{ color: '#f8fafc', fontWeight: 'bold' }}>{infos.length}</span> finders
-          </div>
-          <div className="tracker-item" data-tooltip="Tempo decorrido nesta busca" style={{ fontSize: '11px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <i className="fa-regular fa-clock" style={{ color: '#38bdf8' }}></i> <span style={{ color: '#f8fafc', fontWeight: 'bold' }}>00:00</span>
-          </div>
       </div>
       
       {showCoordsSetting && (
@@ -133,6 +94,7 @@ function App() {
       <SettingsDrawer />
       <PlacesDrawer />
       <BiDashboard />
+      <RegisterModal />
     </div>
   );
 }

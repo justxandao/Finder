@@ -6,7 +6,8 @@ export default function RightSidebar() {
     const { 
         currentRegion, setRegion, curDist, setCurDist, curDir, setCurDir,
         lastPastedPoint, infos, setInfos, isHomeToggleActive, toggleSetting,
-        homePoints, finderLevel, setFinderLevel, dungeonType, setDungeonType
+        homePoints, finderLevel, setFinderLevel, dungeonType, setDungeonType,
+        setRegisterModal
     } = useStore();
 
     const distClick = (dist) => {
@@ -63,6 +64,7 @@ export default function RightSidebar() {
 
     const clearList = () => {
         setInfos([]);
+        setDungeonType('Normal');
         // TODO: clear spawns and intersection in store if needed
     };
 
@@ -104,24 +106,7 @@ export default function RightSidebar() {
             </div>
 
             <div className="finder-actions">
-                <div className="finder-level-filter" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <label style={{ fontSize: '11px', color: '#94a3b8', whiteSpace: 'nowrap' }}>Nível:</label>
-                    <select className="minimap-select" style={{ flex: 1, padding: '4px', fontSize: '11px', minWidth: '0' }} value={finderLevel} onChange={(e) => setFinderLevel(e.target.value)}>
-                        <option value="E">E</option>
-                        <option value="D">D</option>
-                        <option value="C">C</option>
-                        <option value="B">B</option>
-                        <option value="A">A</option>
-                        <option value="S">S</option>
-                    </select>
-                    
-                    <label style={{ fontSize: '11px', color: '#94a3b8', whiteSpace: 'nowrap', marginLeft: '4px' }}>Tipo:</label>
-                    <select className="minimap-select" style={{ flex: 1, padding: '4px', fontSize: '11px', minWidth: '0' }} value={dungeonType} onChange={(e) => setDungeonType(e.target.value)}>
-                        <option value="Normal">Normal</option>
-                        <option value="Fragmento">Fragmento</option>
-                    </select>
-                </div>
-                <button className="finish-btn">
+                <button className="finish-btn" onClick={() => setRegisterModal(true)}>
                     <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> Registrar
                 </button>
                 <div className="sub-actions-row">

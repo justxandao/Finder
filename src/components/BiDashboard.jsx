@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import useStore from '../store/useStore';
-import { save } from '@tauri-apps/plugin-dialog';
-import { writeTextFile } from '@tauri-apps/plugin-fs';
 
 export default function BiDashboard() {
     const { isBiDashboardOpen, setBiDashboard } = useStore();
@@ -9,31 +7,35 @@ export default function BiDashboard() {
 
     if (!isBiDashboardOpen) return null;
 
-    const handleExportCSV = async () => {
+    const handleExportCSV = () => {
         try {
-            const filePath = await save({
-                filters: [{ name: 'CSV', extensions: ['csv'] }],
-                defaultPath: 'historico_buscas.csv'
-            });
-            
-            if (filePath) {
-                const history = JSON.parse(localStorage.getItem('finder_bi_history') || '[]');
-                if (history.length === 0) {
-                    alert("Nenhum dado para exportar.");
-                    return;
-                }
-                // Generate CSV
-                const header = "Data,Tipo,Regiao,Finders,Duracao(s)\n";
-                const rows = history.map(h => {
-                    const date = new Date(h.timestamp).toLocaleString();
-                    return `"${date}","${h.type}","${h.region}",${h.finders},${h.durationSeconds}`;
-                }).join('\n');
-                
-                await writeTextFile(filePath, header + rows);
-                alert("Arquivo exportado com sucesso!");
+            const history = JSON.parse(localStorage.getItem('finder_bi_history') || '[]');
+            if (history.length === 0) {
+                alert("Nenhum dado para exportar.");
+                return;
             }
+            // Generate CSV
+            const header = "Data,Tipo,Regiao,Finders,Duracao(s)\n";
+            const rows = history.map(h => {
+                const date = new Date(h.timestamp).toLocaleString();
+                return `"${date}","${h.type}","${h.region}",${h.finders},${h.durationSeconds}`;
+            }).join('\n');
+            
+            const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "historico_buscas.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up
+            URL.revokeObjectURL(url);
+            
         } catch (e) {
-            console.error("Erro ao salvar CSV:", e);
+            console.error("Erro ao exportar CSV:", e);
             alert("Erro ao exportar CSV.");
         }
     };

@@ -65,22 +65,21 @@ const useStore = create((set) => ({
     return { finderLevel: level };
   }),
   
-  dungeonType: localStorage.getItem('finder_dungeon_type') || 'Normal',
-  setDungeonType: (type) => set(() => {
-    localStorage.setItem('finder_dungeon_type', type);
-    return { dungeonType: type };
-  }),
+  dungeonType: 'Normal',
+  setDungeonType: (type) => set({ dungeonType: type }),
 
   // Sidebar / UI State
   isSidebarOpen: true,
   isPlacesDrawerOpen: false,
   isSettingsDrawerOpen: false,
   isBiDashboardOpen: false,
+  isRegisterModalOpen: false,
 
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   setPlacesDrawer: (open) => set({ isPlacesDrawerOpen: open }),
   setSettingsDrawer: (open) => set({ isSettingsDrawerOpen: open }),
   setBiDashboard: (open) => set({ isBiDashboardOpen: open }),
+  setRegisterModal: (open) => set({ isRegisterModalOpen: open }),
 
   // Data
   allLocations: { Kanto: [], Johto: [], "Orange Archipelago": [] },
