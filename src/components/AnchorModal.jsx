@@ -47,9 +47,7 @@ export default function AnchorModal() {
         setAnchorModal(false);
     };
 
-    const handleClear = () => {
-        setHomePoints([]);
-        toggleSetting('finderHomeToggle', false);
+    const handleCancel = () => {
         setAnchorModal(false);
     };
 
@@ -105,7 +103,7 @@ export default function AnchorModal() {
                     </div>
 
                     <div className="custom-modal-buttons">
-                        <button className="modal-btn cancel" onClick={handleClear} style={{ fontSize: '12px' }}>Limpar</button>
+                        <button className="modal-btn cancel" onClick={handleCancel} style={{ fontSize: '12px' }}>Cancelar</button>
                         <button className="modal-btn confirm" onClick={handleSave} style={{ fontSize: '12px' }}>Salvar</button>
                     </div>
                 </div>

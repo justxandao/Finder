@@ -55,7 +55,11 @@ const useStore = create((set) => ({
   showCoordsSetting: localStorage.getItem('finder_setting_show_coords') !== 'false',
   showSpawnsSetting: localStorage.getItem('finder_setting_show_spawns') !== 'false',
   isHomeToggleActive: localStorage.getItem('finderHomeToggle') === 'true',
-  homePoints: JSON.parse(localStorage.getItem('finderHomePoints')) || { kanto: null, johto: null },
+  homePoints: JSON.parse(localStorage.getItem('finderHomePoints')) || [],
+  setHomePoints: (points) => set((state) => {
+    localStorage.setItem('finderHomePoints', JSON.stringify(points));
+    return { homePoints: points };
+  }),
 
   toggleSetting: (key, value) => set((state) => {
     localStorage.setItem(key, value);
