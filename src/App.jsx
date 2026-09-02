@@ -7,6 +7,7 @@ import SettingsDrawer from './components/SettingsDrawer';
 import BiDashboard from './components/BiDashboard';
 import RegisterModal from './components/RegisterModal';
 import Login from './components/Login';
+import PlacesDrawer from './components/PlacesDrawer';
 import { supabase } from './supabaseClient';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
