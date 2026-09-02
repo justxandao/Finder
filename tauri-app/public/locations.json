@@ -1,0 +1,1253 @@
+{
+  "Kanto": [
+    {
+      "name": "Pallet Town",
+      "x": 3710,
+      "y": 3816,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Viridian City",
+      "x": 3735,
+      "y": 3717,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Pewter City",
+      "x": 3702,
+      "y": 3503,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Coliseum",
+      "x": 3575,
+      "y": 3717,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Cerulean City",
+      "x": 4061,
+      "y": 3491,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Lavender Town",
+      "x": 4252,
+      "y": 3652,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Saffron City",
+      "x": 4090,
+      "y": 3648,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Vermilion City",
+      "x": 4084,
+      "y": 3793,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Celadon City",
+      "x": 3965,
+      "y": 3622,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Cinnabar Island",
+      "x": 3715,
+      "y": 3963,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Fuchsia City",
+      "x": 4151,
+      "y": 3950,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Viridian Forest",
+      "x": 3700,
+      "y": 3625,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Mt. Moon",
+      "x": 3827,
+      "y": 3478,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Cerulean Swamp",
+      "x": 3941,
+      "y": 3523,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Bill's Lighthouse",
+      "x": 4086,
+      "y": 3410,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Cubone's Lair",
+      "x": 4168,
+      "y": 3449,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Power Plant",
+      "x": 4333,
+      "y": 3532,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Rock Tunnel",
+      "x": 4260,
+      "y": 3500,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Diving Spot",
+      "x": 4301,
+      "y": 3779,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Safari Zone",
+      "x": 4044,
+      "y": 3925,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Ranch",
+      "x": 4144,
+      "y": 3871,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Tropical Island",
+      "x": 4395,
+      "y": 3856,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Jungle Island",
+      "x": 3870,
+      "y": 3801,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Green Island",
+      "x": 3815,
+      "y": 3322,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Wildwind Island",
+      "x": 3999,
+      "y": 3283,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Hurricane Island",
+      "x": 4136,
+      "y": 3287,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Lightstorm Island",
+      "x": 4595,
+      "y": 3299,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Charicific Valley",
+      "x": 3578,
+      "y": 3200,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Lost Island",
+      "x": 4583,
+      "y": 4013,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Desert Island",
+      "x": 4611,
+      "y": 3708,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Seafoam Islands",
+      "x": 4017,
+      "y": 4142,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Dark Light Island",
+      "x": 4684,
+      "y": 3490,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Christmas Island",
+      "x": 3985,
+      "y": 4279,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Shell Island",
+      "x": 4314,
+      "y": 3354,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "New Island",
+      "x": 3509,
+      "y": 4315,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Leaf Island",
+      "x": 3695,
+      "y": 4236,
+      "z": 7,
+      "isCity": false
+    }
+  ],
+  "Johto": [
+    {
+      "name": "New Bark Town",
+      "x": 3561,
+      "y": 30484,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Cherrygrove City",
+      "x": 3325,
+      "y": 30503,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Violet City",
+      "x": 3189,
+      "y": 30346,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Azalea Town",
+      "x": 2983,
+      "y": 30825,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Goldenrod City",
+      "x": 2843,
+      "y": 30602,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Ecruteak City",
+      "x": 3038,
+      "y": 30193,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Olivine City",
+      "x": 2655,
+      "y": 30398,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Cianwood City",
+      "x": 2304,
+      "y": 30735,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Mahogany Town",
+      "x": 3317,
+      "y": 30209,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Blackthorn City",
+      "x": 3558,
+      "y": 30227,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Alto Mare City",
+      "x": 3138,
+      "y": 31312,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Lake of Rage",
+      "x": 3313,
+      "y": 29997,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Arborville Town",
+      "x": 2702,
+      "y": 30094,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Whirl Islands",
+      "x": 2568,
+      "y": 30684,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Silver Town",
+      "x": 3735,
+      "y": 30272,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Indigo Plateau",
+      "x": 3848,
+      "y": 30205,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Safari Zone",
+      "x": 2256,
+      "y": 30537,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Ilex Forest",
+      "x": 2816,
+      "y": 30830,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Slowpoke Well",
+      "x": 3067,
+      "y": 30798,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Victory Road",
+      "x": 3859,
+      "y": 30274,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Lake of Life",
+      "x": 2689,
+      "y": 29978,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Secret Garden",
+      "x": 3138,
+      "y": 31148,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Ruins of Alph",
+      "x": 3019,
+      "y": 30426,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "National Park",
+      "x": 2861,
+      "y": 30318,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Mt. Mortar",
+      "x": 3213,
+      "y": 30136,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Moomoo Farm",
+      "x": 2672,
+      "y": 30220,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Battle Frontier",
+      "x": 2490,
+      "y": 30336,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Dragon's Den",
+      "x": 3561,
+      "y": 30152,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Ice Path",
+      "x": 3527,
+      "y": 30190,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Burned Tower",
+      "x": 3022,
+      "y": 30138,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Sprout Tower",
+      "x": 3191,
+      "y": 30269,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Cliff Cave",
+      "x": 2232,
+      "y": 30787,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Dark Cave",
+      "x": 3432,
+      "y": 30376,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Mt. Silver",
+      "x": 3681,
+      "y": 30252,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Bell Tower",
+      "x": 3072,
+      "y": 30110,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Union Cave",
+      "x": 2968,
+      "y": 30756,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Fishing Spot",
+      "x": 3066,
+      "y": 30641,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Mt. Ember",
+      "x": 3662,
+      "y": 31233,
+      "z": 6,
+      "isCity": true
+    },
+    {
+      "name": "Tangle Island",
+      "x": 2310,
+      "y": 30032,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Dust Island",
+      "x": 4015,
+      "y": 29976,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Spark Island",
+      "x": 3545,
+      "y": 30753,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Dunes of Silence",
+      "x": 2289,
+      "y": 31227,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Blaze Island",
+      "x": 3789,
+      "y": 29958,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Blossom Island",
+      "x": 3946,
+      "y": 30889,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Palm Island",
+      "x": 2635,
+      "y": 31172,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Forgotten Island",
+      "x": 2625,
+      "y": 31348,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Dragonstone Island",
+      "x": 3546,
+      "y": 30020,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Palm Hills",
+      "x": 3434,
+      "y": 30582,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Sunny Islands",
+      "x": 3203,
+      "y": 30640,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Astral Ruins",
+      "x": 3391,
+      "y": 30965,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Star Islands",
+      "x": 4005,
+      "y": 30691,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Quiet Island",
+      "x": 3988,
+      "y": 31369,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Coconut Island",
+      "x": 2826,
+      "y": 31428,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Savanna Island",
+      "x": 2863,
+      "y": 31105,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Lost Ruins",
+      "x": 1774,
+      "y": 29969,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Wildfire Island",
+      "x": 2560,
+      "y": 30981,
+      "z": 6,
+      "isCity": false
+    },
+    {
+      "name": "Wetland Island",
+      "x": 2157,
+      "y": 30240,
+      "z": 6,
+      "isCity": false
+    }
+  ],
+  "Orange Archipelago": [
+    {
+      "name": "Ascorbia Island",
+      "x": 4414,
+      "y": 4373,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Hamlin Island",
+      "x": 3649,
+      "y": 4515,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Shamouti Island",
+      "x": 3640,
+      "y": 5027,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Mandarin Island",
+      "x": 3774,
+      "y": 6147,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Magma Island",
+      "x": 3647,
+      "y": 4724,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Butwal Island",
+      "x": 4078,
+      "y": 4529,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Tarroco Island",
+      "x": 3367,
+      "y": 4663,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Cleopatra Island",
+      "x": 4045,
+      "y": 4837,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Moro Island",
+      "x": 4462,
+      "y": 5605,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Murcott Island",
+      "x": 4610,
+      "y": 6119,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Golden Island",
+      "x": 4225,
+      "y": 6263,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Valencia Island",
+      "x": 3393,
+      "y": 6124,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Tangelo Island",
+      "x": 3028,
+      "y": 5930,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Rocket Hideout",
+      "x": 4405,
+      "y": 4301,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Abandoned City",
+      "x": 3714,
+      "y": 4453,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Abandoned City",
+      "x": 3540,
+      "y": 4542,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Mysterious Shrine",
+      "x": 3660,
+      "y": 5157,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Pinkan Island",
+      "x": 3204,
+      "y": 5052,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Main Police Station",
+      "x": 3369,
+      "y": 4608,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Lakeshore Island",
+      "x": 3372,
+      "y": 4853,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Lightning Island",
+      "x": 3456,
+      "y": 5485,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Ice Island",
+      "x": 3746,
+      "y": 5465,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Fire Island",
+      "x": 4000,
+      "y": 5339,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Seven Grapefruit Islands",
+      "x": 4450,
+      "y": 5270,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Kabuto Fossil Island",
+      "x": 3409,
+      "y": 5783,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Trovitopolis City",
+      "x": 3781,
+      "y": 5956,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Old Village",
+      "x": 3750,
+      "y": 6373,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Kinnow Islands",
+      "x": 4181,
+      "y": 5836,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Fight Club",
+      "x": 3576,
+      "y": 4927,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Excavation Site",
+      "x": 3460,
+      "y": 5838,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Camping Site",
+      "x": 4026,
+      "y": 4221,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Metal Ship",
+      "x": 4417,
+      "y": 5729,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Easter Island",
+      "x": 4492,
+      "y": 4155,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Dark Moon Island",
+      "x": 4153,
+      "y": 4705,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Sphinx Island",
+      "x": 4068,
+      "y": 5462,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Ghost Ship",
+      "x": 4660,
+      "y": 5595,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Fairchild Island",
+      "x": 3774,
+      "y": 5747,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Leek Island",
+      "x": 4128,
+      "y": 6122,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Petalgroove Island",
+      "x": 4540,
+      "y": 4639,
+      "z": 7,
+      "isCity": false
+    }
+  ],
+  "Orre": [
+    {
+      "name": "Phenac City",
+      "x": 5482,
+      "y": 5696,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Agate Village",
+      "x": 5487,
+      "y": 5931,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Artificial Safari",
+      "x": 5829,
+      "y": 5603,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Embedded Tower",
+      "x": 5602,
+      "y": 5773,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "HQ Lab",
+      "x": 5398,
+      "y": 5961,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Outskirt Stands",
+      "x": 5545,
+      "y": 5608,
+      "z": 7,
+      "isCity": false
+    },
+    {
+      "name": "Gateon Port",
+      "x": 5672,
+      "y": 6083,
+      "z": 7,
+      "isCity": true
+    }
+  ],
+  "Outland": [
+    {
+      "name": "Outland North",
+      "x": 2709,
+      "y": 2917,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Outland East",
+      "x": 2927,
+      "y": 3050,
+      "z": 7,
+      "isCity": true
+    },
+    {
+      "name": "Outland South",
+      "x": 2713,
+      "y": 3180,
+      "z": 7,
+      "isCity": true
+    }
+  ],
+  "Nightmare": [
+    {
+      "name": "Cerulean Resistance",
+      "x": 30637,
+      "y": 20301,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Lavender Resistance",
+      "x": 30824,
+      "y": 20464,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Fuchsia Resistance",
+      "x": 30691,
+      "y": 20792,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Cinnabar Resistance",
+      "x": 30338,
+      "y": 20721,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Pallet Resistance",
+      "x": 30285,
+      "y": 20622,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Pewter Resistance",
+      "x": 30346,
+      "y": 20344,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Cerulean Swamp",
+      "x": 30512,
+      "y": 20316,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Fire Island",
+      "x": 30454,
+      "y": 20620,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Frozen Lands",
+      "x": 30934,
+      "y": 20373,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Dried Diving Spot",
+      "x": 30864,
+      "y": 20621,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Tropical Island",
+      "x": 31088,
+      "y": 20590,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Cosmic Island",
+      "x": 30898,
+      "y": 20111,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Mt. Moon",
+      "x": 30406,
+      "y": 20288,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Dragon Tunnel",
+      "x": 30843,
+      "y": 20345,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Peaky Mountains",
+      "x": 30400,
+      "y": 20428,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Sarkies' Fortress",
+      "x": 30260,
+      "y": 20298,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Sarkies' Factory",
+      "x": 30032,
+      "y": 20097,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Alakazam Lair",
+      "x": 30743,
+      "y": 20245,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Power Plant",
+      "x": 30634,
+      "y": 20606,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Seafoam Island",
+      "x": 30584,
+      "y": 20906,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Cinnabar Island",
+      "x": 30286,
+      "y": 20817,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Shadow Crypt",
+      "x": 30202,
+      "y": 20547,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Fighting Dojo",
+      "x": 30753,
+      "y": 20539,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Safari Zone",
+      "x": 30605,
+      "y": 20735,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "New Island",
+      "x": 30005,
+      "y": 21117,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Wastelands",
+      "x": 30671,
+      "y": 20369,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Dark Manor",
+      "x": 30223,
+      "y": 20393,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Butterfree Island",
+      "x": 30452,
+      "y": 20774,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Wildwind Island",
+      "x": 30521,
+      "y": 20066,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Isolated Sands",
+      "x": 30436,
+      "y": 20962,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Hurricane Island",
+      "x": 30685,
+      "y": 20087,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Lightstorm Island",
+      "x": 31169,
+      "y": 20037,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Lost Island",
+      "x": 31041,
+      "y": 20739,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Green Island",
+      "x": 30370,
+      "y": 20131,
+      "z": 5,
+      "isCity": false
+    },
+    {
+      "name": "Desert Island",
+      "x": 33269,
+      "y": 27419,
+      "z": 7,
+      "isCity": false
+    }
+  ]
+}
