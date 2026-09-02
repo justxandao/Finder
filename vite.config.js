@@ -3,9 +3,18 @@ import react from "@vitejs/plugin-react";
 
 const host = process.env.TAURI_DEV_HOST;
 
+const removeCrossoriginPlugin = () => {
+  return {
+    name: 'remove-crossorigin',
+    transformIndexHtml(html) {
+      return html.replace(/crossorigin/g, '');
+    }
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig(async () => ({
-  plugins: [react()],
+  plugins: [react(), removeCrossoriginPlugin()],
   base: './',
 
   clearScreen: false,

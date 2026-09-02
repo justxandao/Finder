@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.disableHardwareAcceleration();
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
@@ -31,6 +33,9 @@ function createWindow() {
     // Em produção, ele carrega o arquivo index.html compilado na pasta dist
     win.loadFile(path.join(__dirname, '../dist/index.html'));
   }
+
+  // Open DevTools to debug white screen issues
+  win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
