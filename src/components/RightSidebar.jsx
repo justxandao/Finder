@@ -121,19 +121,20 @@ export default function RightSidebar({ elapsedSeconds = 0 }) {
             </div>
 
             <div className="finder-compass">
-                <button className="dir-btn" onClick={() => dirClick(5)}><i className="fa-solid fa-arrow-up-left"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(6)}><i className="fa-solid fa-arrow-up"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(7)}><i className="fa-solid fa-arrow-up-right"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(4)}><i className="fa-solid fa-arrow-left"></i></button>
-                <button className="dir-btn center-dir" onClick={() => dirClick(-1)}><i className="fa-solid fa-location-crosshairs"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(0)}><i className="fa-solid fa-arrow-right"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(3)}><i className="fa-solid fa-arrow-down-left"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(2)}><i className="fa-solid fa-arrow-down"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(1)}><i className="fa-solid fa-arrow-down-right"></i></button>
+                {/* Compass grid: NW N NE / W Center E / SW S SE */}
+                <button className="dir-btn" onClick={() => dirClick(5)}><img src="imgs_finder/NorthWest.png" style={{width:'16px',height:'16px'}} alt="NW"/></button>
+                <button className="dir-btn" onClick={() => dirClick(6)}><img src="imgs_finder/North.png" style={{width:'16px',height:'16px'}} alt="N"/></button>
+                <button className="dir-btn" onClick={() => dirClick(7)}><img src="imgs_finder/NorthEast.png" style={{width:'16px',height:'16px'}} alt="NE"/></button>
+                <button className="dir-btn" onClick={() => dirClick(4)}><img src="imgs_finder/West.png" style={{width:'16px',height:'16px'}} alt="W"/></button>
+                <button className="dir-btn center-dir" onClick={() => dirClick(-1)}><img src="imgs_finder/Center.png" style={{width:'16px',height:'16px'}} alt="Center"/></button>
+                <button className="dir-btn" onClick={() => dirClick(0)}><img src="imgs_finder/East.png" style={{width:'16px',height:'16px'}} alt="E"/></button>
+                <button className="dir-btn" onClick={() => dirClick(3)}><img src="imgs_finder/SouthWest.png" style={{width:'16px',height:'16px'}} alt="SW"/></button>
+                <button className="dir-btn" onClick={() => dirClick(2)}><img src="imgs_finder/South.png" style={{width:'16px',height:'16px'}} alt="S"/></button>
+                <button className="dir-btn" onClick={() => dirClick(1)}><img src="imgs_finder/SouthEast.png" style={{width:'16px',height:'16px'}} alt="SE"/></button>
             </div>
 
             <div className="finder-actions">
-                <button className="finish-btn" onClick={() => setRegisterModal(true)}>
+                <button className="finish-btn" onClick={() => setRegisterModal(true)} style={{ fontSize: '13px', padding: '6px 10px', height: 'auto' }}>
                     <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> Registrar
                 </button>
                 <div className="sub-actions-row">

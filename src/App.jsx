@@ -33,7 +33,7 @@ function getBasePath() {
 function App() {
   const { 
     session, setSession, curFloor, showCoordsSetting, setSettingsDrawer, setBiDashboard, setPlacesDrawer, toggleSidebar,
-    currentRegion, setRegion, isHomeToggleActive, toggleSetting, infos
+    currentRegion, setRegion, isHomeToggleActive, toggleSetting, infos, curCoords
   } = useStore();
   const [initializing, setInitializing] = useState(true);
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
@@ -138,19 +138,20 @@ function App() {
               <option value="johto">Johto</option>
           </select>
           <div className="home-toggle" style={{ display: 'flex', alignItems: 'center' }}>
-              <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('isHomeToggleActive', e.target.checked)} />
+              <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('finderHomeToggle', e.target.checked)} />
               <label htmlFor="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo"><i className="fa-solid fa-anchor"></i></label>
           </div>
 
-          {/* Always-on-top toggle */}
+          {/* Always-on-top toggle — icon only, no box */}
           <button
             onClick={handleAlwaysOnTop}
             data-tooltip={alwaysOnTop ? 'Desativar Sempre no Topo' : 'Sempre no Topo'}
             style={{
-              background: alwaysOnTop ? 'rgba(56, 189, 248, 0.25)' : 'transparent',
-              border: alwaysOnTop ? '1px solid rgba(56,189,248,0.6)' : '1px solid rgba(255,255,255,0.15)',
-              borderRadius: '6px', padding: '2px 7px', cursor: 'pointer', color: alwaysOnTop ? '#38bdf8' : '#94a3b8',
-              fontSize: '13px', transition: 'all 0.2s'
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '6px', padding: '2px 6px', cursor: 'pointer',
+              color: alwaysOnTop ? '#38bdf8' : '#94a3b8',
+              fontSize: '13px', transition: 'color 0.2s'
             }}
           >
             <i className="fa-solid fa-thumbtack"></i>
@@ -173,7 +174,7 @@ function App() {
       
       {showCoordsSetting && (
         <div id="coords-display" className="minimap-coords" style={{ left: 15, top: 45 }}>
-          {`(X, Y, ${curFloor})`}
+          {`${curCoords.x}, ${curCoords.y}, ${curFloor}`}
         </div>
       )}
 

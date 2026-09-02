@@ -11,7 +11,7 @@ const CRSPixel = L.Util.extend(L.CRS.Simple, { transformation: new L.Transformat
 const locationIcon = L.icon({ iconUrl: 'imgs_finder/location.png', iconSize: [24, 24], iconAnchor: [12, 24] });
 
 function MapEvents() {
-    const { setLastPastedPoint, curFloor, regionConfigs, currentRegion } = useStore();
+    const { setLastPastedPoint, setCurCoords, curFloor, regionConfigs, currentRegion } = useStore();
     const map = useMapEvents({
         click: (e) => {
             const intX = Math.floor(e.latlng.lng);
@@ -22,6 +22,11 @@ function MapEvents() {
             navigator.clipboard.writeText(coordString)
                 .then(() => console.log("Copied: ", coordString))
                 .catch(err => console.error("Clipboard error:", err));
+        },
+        mousemove: (e) => {
+            const intX = Math.floor(e.latlng.lng);
+            const intY = Math.floor(e.latlng.lat);
+            setCurCoords({ x: intX, y: intY });
         }
     });
     

@@ -38,11 +38,13 @@ const useStore = create((set) => ({
   lastPastedPoint: null,
   curDist: { min: 0, max: 30 },
   curDir: 0,
+  curCoords: { x: 0, y: 0 },
   
   setInfos: (infos) => set({ infos }),
   setLastPastedPoint: (point) => set({ lastPastedPoint: point }),
   setCurDist: (dist) => set({ curDist: dist }),
   setCurDir: (dir) => set({ curDir: dir }),
+  setCurCoords: (coords) => set({ curCoords: coords }),
 
   // Settings
   showMapLocations: localStorage.getItem('finderShowLocations') !== 'false',
