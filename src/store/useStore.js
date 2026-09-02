@@ -18,6 +18,10 @@ const regionConfigs = {
 };
 
 const useStore = create((set) => ({
+  // Auth Session
+  session: null,
+  setSession: (session) => set({ session }),
+
   // Region & Map
   currentRegion: 'kanto',
   curFloor: regionConfigs.kanto.defaultFloor,

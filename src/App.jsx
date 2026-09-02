@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useStore from './store/useStore';
 import MapView from './components/MapView';
 import RightSidebar from './components/RightSidebar';
@@ -6,13 +6,32 @@ import LeftSidebar from './components/LeftSidebar';
 import SettingsDrawer from './components/SettingsDrawer';
 import PlacesDrawer from './components/PlacesDrawer';
 import BiDashboard from './components/BiDashboard';
+import Login from './components/Login';
+import { supabase } from './supabaseClient';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
-  const { curFloor, showCoordsSetting, setSettingsDrawer, setBiDashboard, setPlacesDrawer, toggleSidebar } = useStore();
+  const { session, setSession, curFloor, showCoordsSetting, setSettingsDrawer, setBiDashboard, setPlacesDrawer, toggleSidebar } = useStore();
+  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
+    // Carregar sessão inicial
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setInitializing(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setSession]);
+
+  useEffect(() => {
+    if (!session) return; // Só carrega se estiver logado
+    
     fetch('/locations.json')
       .then(res => res.json())
       .then(data => useStore.getState().setLocations(data))
@@ -37,7 +56,13 @@ function App() {
         useStore.getState().setSpawns(spawns);
       })
       .catch(err => console.error("Erro spawns.json:", err));
-  }, []);
+  }, [session]);
+
+  if (initializing) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0f172a', color: 'white' }}>Carregando...</div>;
+
+  if (!session) {
+    return <Login />;
+  }
 
   return (
     <div id="app-container" style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>

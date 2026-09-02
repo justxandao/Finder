@@ -1,5 +1,6 @@
 import React from 'react';
 import useStore from '../store/useStore';
+import { supabase } from '../supabaseClient';
 
 export default function SettingsDrawer() {
     const { 
@@ -81,6 +82,9 @@ export default function SettingsDrawer() {
                     </div>
 
                     <div className="settings-footer">
+                        <button className="action-btn restore-defaults-btn" style={{ marginBottom: '10px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }} onClick={() => supabase.auth.signOut()}>
+                            <i className="fa-solid fa-right-from-bracket"></i> Sair da Conta
+                        </button>
                         <button className="action-btn restore-defaults-btn">
                             <i className="fa-solid fa-arrow-rotate-left"></i> Restaurar Padrões
                         </button>
