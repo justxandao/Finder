@@ -47,6 +47,30 @@ export default function BiDashboard() {
             return `${h}h ${m}m`;
         };
 
+        const parseItem = (text, itemName) => {
+            if (!text) return 0;
+            const regex = new RegExp(`(?:(\\d+)\\s*x\\s*)?${itemName}|${itemName}(?:\\s*x\\s*(\\d+))?`, 'gi');
+            let total = 0;
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                const count = parseInt(match[1] || match[2] || "1", 10);
+                total += count;
+            }
+            return total;
+        };
+
+        let totalMystic = 0;
+        let totalCoin = 0;
+        let totalBar = 0;
+
+        history.forEach(h => {
+            if (h.lootText) {
+                totalMystic += parseItem(h.lootText, "mystic fragment");
+                totalCoin += parseItem(h.lootText, "gold coin");
+                totalBar += parseItem(h.lootText, "gold bar");
+            }
+        });
+
         return {
             total,
             totalDurationText: formatTime(totalDuration),
@@ -55,7 +79,8 @@ export default function BiDashboard() {
             avgFinders,
             levels,
             types,
-            regions
+            regions,
+            loot: { mystic: totalMystic, coin: totalCoin, bar: totalBar }
         };
     }, [history]);
 
@@ -212,52 +237,25 @@ export default function BiDashboard() {
 
                         {activeTab === 'loot' && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0 }}>
-                                    Cole abaixo as mensagens do sistema para calcular automaticamente seus lucros.
+                                <p style={{ fontSize: '13px', color: '#94a3b8', margin: 0, textAlign: 'center' }}>
+                                    Loot total registrado a partir das caçadas em seu histórico.
                                 </p>
-                                <textarea 
-                                    style={{ width: '100%', height: '120px', background: 'rgba(15, 23, 42, 0.5)', color: '#f8fafc', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '12px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'monospace' }}
-                                    placeholder="Exemplo:&#10;You obtained 2x Mystic Fragment.&#10;You received 1x Gold Coin."
-                                    onChange={(e) => {
-                                        const text = e.target.value;
-                                        const parseItem = (itemName) => {
-                                            const regex = new RegExp(`(?:(\\d+)\\s*x\\s*)?${itemName}|${itemName}(?:\\s*x\\s*(\\d+))?`, 'gi');
-                                            let total = 0;
-                                            let match;
-                                            while ((match = regex.exec(text)) !== null) {
-                                                const count = parseInt(match[1] || match[2] || "1", 10);
-                                                total += count;
-                                            }
-                                            return total;
-                                        };
-                                        const mFrag = parseItem("mystic fragment");
-                                        const gCoin = parseItem("gold coin");
-                                        const gBar = parseItem("gold bar");
-                                        
-                                        const mFragEl = document.getElementById('loot-mystic');
-                                        if (mFragEl) mFragEl.innerText = mFrag;
-                                        const gCoinEl = document.getElementById('loot-coin');
-                                        if (gCoinEl) gCoinEl.innerText = gCoin;
-                                        const gBarEl = document.getElementById('loot-bar');
-                                        if (gBarEl) gBarEl.innerText = gBar;
-                                    }}
-                                ></textarea>
                                 
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginTop: '10px' }}>
                                     <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                                         <img src="imgs_finder/mystic fragment.png" alt="Mystic Fragment" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                                         <div style={{ fontSize: '12px', color: '#94a3b8' }}>Mystic Fragment</div>
-                                        <span id="loot-mystic" style={{ fontWeight: 'bold', fontSize: '28px', color: '#f8fafc' }}>0</span>
+                                        <span id="loot-mystic" style={{ fontWeight: 'bold', fontSize: '28px', color: '#f8fafc' }}>{stats?.loot.mystic || 0}</span>
                                     </div>
                                     <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                                         <img src="imgs_finder/gold coin.png" alt="Gold Coin" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                                         <div style={{ fontSize: '12px', color: '#94a3b8' }}>Gold Coin</div>
-                                        <span id="loot-coin" style={{ fontWeight: 'bold', fontSize: '28px', color: '#fbbf24' }}>0</span>
+                                        <span id="loot-coin" style={{ fontWeight: 'bold', fontSize: '28px', color: '#fbbf24' }}>{stats?.loot.coin || 0}</span>
                                     </div>
                                     <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                                         <img src="imgs_finder/gold bar.png" alt="Gold Bar" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
                                         <div style={{ fontSize: '12px', color: '#94a3b8' }}>Gold Bar</div>
-                                        <span id="loot-bar" style={{ fontWeight: 'bold', fontSize: '28px', color: '#fbbf24' }}>0</span>
+                                        <span id="loot-bar" style={{ fontWeight: 'bold', fontSize: '28px', color: '#fbbf24' }}>{stats?.loot.bar || 0}</span>
                                     </div>
                                 </div>
                             </div>

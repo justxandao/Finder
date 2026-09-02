@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useStore from '../store/useStore';
 import { useToast } from './Toast';
 
@@ -7,9 +7,10 @@ export default function RegisterModal({ elapsedSeconds = 0 }) {
     const { 
         isRegisterModalOpen, setRegisterModal,
         finderLevel, setFinderLevel,
-        dungeonType, setDungeonType,
         infos, currentRegion
     } = useStore();
+
+    const [lootText, setLootText] = useState('');
 
     if (!isRegisterModalOpen) return null;
 
@@ -19,22 +20,38 @@ export default function RegisterModal({ elapsedSeconds = 0 }) {
         return `${m}:${s}`;
     };
 
+    const handlePasteLoot = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            setLootText(text);
+            showToast("Loot colado!", "success");
+        } catch (e) {
+            showToast("Erro ao colar", "error");
+        }
+    };
+
     const handleRegister = () => {
         const history = JSON.parse(localStorage.getItem('finder_bi_history') || '[]');
+        
+        // Detect fragment from loot
+        const hasFragment = lootText.toLowerCase().includes('mystic fragment');
+        const type = hasFragment ? 'Fragment' : 'Normal';
+
         const newEntry = {
             timestamp: Date.now(),
-            type: dungeonType,
+            type: type,
             level: finderLevel,
             region: currentRegion,
             finders: infos.length,
-            durationSeconds: elapsedSeconds
+            durationSeconds: elapsedSeconds,
+            lootText: lootText
         };
         history.push(newEntry);
         localStorage.setItem('finder_bi_history', JSON.stringify(history));
         
         // Reset state
         useStore.getState().setInfos([]);
-        useStore.getState().setDungeonType('Normal');
+        setLootText('');
         setRegisterModal(false);
         showToast(`Caçada registrada com sucesso!`, 'success');
     };
@@ -43,56 +60,111 @@ export default function RegisterModal({ elapsedSeconds = 0 }) {
         <>
             <div className="drawer-backdrop active" onClick={() => setRegisterModal(false)}></div>
             <div className="custom-modal-overlay visible" style={{ zIndex: 3000 }}>
-                <div className="bi-dashboard-modal" style={{ width: '340px', height: 'auto', padding: '20px' }}>
-                    <div className="modal-header">
-                        <div className="title-area">
-                            <h3 style={{ display: 'flex', alignItems: 'center', margin: 0, color: '#f8fafc', fontSize: '17px' }}>
-                                <img src="imgs_finder/chest.png" alt="Baú" style={{width:'22px', marginRight:'10px'}}/> Registrar Caça
-                            </h3>
-                        </div>
-                        <button className="close-modal-btn" onClick={() => setRegisterModal(false)}>&times;</button>
+                <div style={{ background: '#111827', width: '380px', borderRadius: '12px', padding: '24px', color: '#f8fafc', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', fontFamily: 'Inter, sans-serif' }}>
+                    {/* Header */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+                        <i className="fa-solid fa-location-dot" style={{ fontSize: '20px' }}></i>
+                        <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>Registrar Finder</h2>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '18px' }}>
-                        
-                        {/* Session summary */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.5)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                                <span style={{ color: '#94a3b8', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Finders Usados</span>
-                                <span style={{ color: '#fbbf24', fontSize: '26px', fontWeight: '700', lineHeight: 1 }}>{infos.length}</span>
-                            </div>
-                            <div style={{ width: '1px', background: 'rgba(255,255,255,0.08)' }}></div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                                <span style={{ color: '#94a3b8', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tempo Decorrido</span>
-                                <span style={{ color: '#c4b5fd', fontSize: '26px', fontWeight: '700', lineHeight: 1 }}>{formatTime(elapsedSeconds)}</span>
+                    {/* Finder Level */}
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px', gap: '15px' }}>
+                        <span style={{ fontSize: '13px', color: '#94a3b8', lineHeight: 1.2, width: '70px' }}>Qual Finder<br/>foi usado?</span>
+                        <div style={{ display: 'flex', gap: '8px', flex: 1, justifyContent: 'space-between' }}>
+                            {['E', 'D', 'C', 'B', 'A', 'S'].map(lvl => (
+                                <button 
+                                    key={lvl}
+                                    onClick={() => setFinderLevel(lvl)}
+                                    style={{
+                                        background: finderLevel === lvl ? 'rgba(234, 179, 8, 0.15)' : '#1f2937',
+                                        border: finderLevel === lvl ? '1px solid #eab308' : '1px solid #374151',
+                                        color: finderLevel === lvl ? '#eab308' : '#94a3b8',
+                                        borderRadius: '8px', width: '36px', height: '36px',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontWeight: 'bold', fontSize: '14px', cursor: 'pointer',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    {lvl}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Stats Row */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+                        {/* Finders Gastos */}
+                        <div style={{ background: '#1f2937', borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', border: '1px solid #374151' }}>
+                            <i className="fa-solid fa-satellite-dish" style={{ color: '#94a3b8', fontSize: '20px' }}></i>
+                            <div>
+                                <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '0.5px' }}>FINDERS GASTOS</div>
+                                <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#f8fafc', lineHeight: 1, marginTop: '2px' }}>{infos.length}</div>
                             </div>
                         </div>
 
-                        {/* Fields */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <label style={{ color: '#f8fafc', fontSize: '13px' }}>Nível do Finder</label>
-                                <select className="minimap-select" style={{ width: '130px', padding: '6px' }} value={finderLevel} onChange={(e) => setFinderLevel(e.target.value)}>
-                                    <option value="E">E</option>
-                                    <option value="D">D</option>
-                                    <option value="C">C</option>
-                                    <option value="B">B</option>
-                                    <option value="A">A</option>
-                                    <option value="S">S</option>
-                                </select>
-                            </div>
-                            
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <label style={{ color: '#f8fafc', fontSize: '13px' }}>Tipo de Dungeon</label>
-                                <select className="minimap-select" style={{ width: '130px', padding: '6px' }} value={dungeonType} onChange={(e) => setDungeonType(e.target.value)}>
-                                    <option value="Normal">Normal</option>
-                                    <option value="Fragmento">Fragmento</option>
-                                </select>
+                        {/* Tempo Decorrido */}
+                        <div style={{ background: '#1f2937', borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', border: '1px solid #374151' }}>
+                            <i className="fa-regular fa-clock" style={{ color: '#94a3b8', fontSize: '20px' }}></i>
+                            <div>
+                                <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 'bold', letterSpacing: '0.5px' }}>TEMPO DECORRIDO</div>
+                                <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#f8fafc', lineHeight: 1, marginTop: '2px' }}>{formatTime(elapsedSeconds)}</div>
                             </div>
                         </div>
+                    </div>
 
-                        <button className="finish-btn" onClick={handleRegister} style={{ marginTop: '4px', width: '100%', height: '40px', fontSize: '15px' }}>
-                            <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> Registrar
+                    {/* Loot Input */}
+                    <div style={{ background: '#1f2937', borderRadius: '8px', padding: '12px', border: '1px dashed #374151', marginBottom: '24px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                            <img src="imgs_finder/gold bar.png" alt="Loot" style={{ width: '16px' }} />
+                            <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#cbd5e1' }}>Loot do Chat (Opcional):</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <input 
+                                type="text" 
+                                value={lootText}
+                                onChange={e => setLootText(e.target.value)}
+                                placeholder="Ex: Você recebeu 6 gold bars..."
+                                style={{
+                                    flex: 1, background: '#111827', border: '1px solid #374151', 
+                                    borderRadius: '6px', color: '#94a3b8', padding: '8px 12px',
+                                    fontSize: '12px', outline: 'none'
+                                }}
+                            />
+                            <button 
+                                onClick={handlePasteLoot}
+                                style={{
+                                    background: '#374151', border: 'none', borderRadius: '6px',
+                                    width: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    color: '#f8fafc', cursor: 'pointer', transition: 'background 0.2s'
+                                }}
+                                onMouseOver={e => e.currentTarget.style.background = '#4b5563'}
+                                onMouseOut={e => e.currentTarget.style.background = '#374151'}
+                            >
+                                <i className="fa-solid fa-paste"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Footer Buttons */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '16px' }}>
+                        <button 
+                            onClick={() => setRegisterModal(false)}
+                            style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+                        >
+                            Cancelar
+                        </button>
+                        <button 
+                            onClick={handleRegister}
+                            style={{
+                                background: '#10b981', border: 'none', borderRadius: '6px',
+                                color: '#fff', fontWeight: 'bold', fontSize: '14px', padding: '10px 20px',
+                                display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
+                                boxShadow: '0 4px 6px rgba(16, 185, 129, 0.2)', transition: 'background 0.2s'
+                            }}
+                            onMouseOver={e => e.currentTarget.style.background = '#059669'}
+                            onMouseOut={e => e.currentTarget.style.background = '#10b981'}
+                        >
+                            <i className="fa-solid fa-check"></i> Salvar
                         </button>
                     </div>
                 </div>
