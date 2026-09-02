@@ -13,6 +13,12 @@ Originalmente desenvolvido em Vanilla JS e Electron, este projeto foi migrado e 
 * **[Turf.js](https://turfjs.org/)**: Biblioteca avançada de geoprocessamento matemático, utilizada para calcular a intersecção exata dos radares de distância e desenhar as áreas prováveis no mapa.
 * **[Zustand](https://github.com/pmndrs/zustand)**: Gerenciamento de estado global limpo e simplificado.
 
+## ✨ Novas Funcionalidades (Nova Linguagem React/Tauri)
+- **Mapa Otimizado:** Tiles carregados via Leaflet com marcadores de localizações e spawns de Pokémon em tempo real.
+- **Sidebars Flutuantes e Responsivas:** Menus que se adaptam à tela, ideais para jogar com a interface sobreposta.
+- **Painel de BI e Contador de Loot:** Nova área que faz a leitura automática dos logs do jogo colados na caixa de texto, exibindo os itens (como Mystic Fragments e Gold Coins) que você obteve.
+- **Registro de Caça Inteligente:** Permite registrar os "níveis" de finders (S, A, B, C, D, E) e categorias de dungeon (Normal, Fragmento) persistindo as seleções na sua sessão.
+
 ## 📦 Como Instalar e Rodar
 
 ### Pré-requisitos

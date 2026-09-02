@@ -120,22 +120,23 @@ body {
 /* Sidebar Esquerda Fluída e Redimensionável */
 .list-sidebar {
     position: absolute;
-    top: 60px;
+    top: 45px;
     bottom: 15px;
     left: 10px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     background: rgba(15, 23, 42, 0.75);
-    padding: 12px;
-    border-radius: 16px;
+    padding: 8px;
+    border-radius: 12px;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    width: 180px;
-    min-width: 150px;
-    min-height: 180px;
+    width: 160px;
+    min-width: 130px;
+    min-height: 150px;
+    max-height: calc(100vh - 60px);
     box-sizing: border-box;
     transition: opacity 0.2s, visibility 0.2s;
     resize: both;
@@ -170,8 +171,8 @@ body {
 }
 
 .minimap-btn {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background-color: rgba(15, 23, 42, 0.75);
     backdrop-filter: blur(8px);
@@ -183,7 +184,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
+    font-size: 14px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -220,14 +221,14 @@ body {
     align-items: center;
     flex-direction: row;
     width: 100%;
-    height: 28px;
+    height: 24px;
     border-style: solid;
     border-width: 1px;
     border-radius: 6px;
-    padding: 4px 8px;
+    padding: 2px 6px;
     margin: 2px auto;
     color: #f1f5f9;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
     box-sizing: border-box;
@@ -301,19 +302,21 @@ body {
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     background: rgba(15, 23, 42, 0.75);
-    padding: 16px;
-    border-radius: 16px;
+    padding: 10px;
+    border-radius: 12px;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    width: 200px;
-    min-width: 170px;
+    width: 160px;
+    min-width: 140px;
+    max-height: calc(100vh - 20px);
     box-sizing: border-box;
     resize: both;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .finder-colors {
@@ -323,8 +326,8 @@ body {
 }
 
 .color-btn {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     border: 2px solid transparent;
     background: transparent;
@@ -337,8 +340,8 @@ body {
 }
 
 .color-btn img {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
     filter: grayscale(40%) brightness(0.7);
     transition: filter 0.2s;
@@ -365,8 +368,8 @@ body {
 }
 
 .dir-btn {
-    width: 32px;
-    height: 32px;
+    width: 26px;
+    height: 26px;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid transparent;
@@ -380,7 +383,7 @@ body {
 }
 
 .dir-btn i {
-    font-size: 16px;
+    font-size: 14px;
     color: rgba(255, 255, 255, 0.7);
     transition: color 0.2s, text-shadow 0.2s, transform 0.2s;
 }
@@ -391,7 +394,7 @@ body {
 }
 
 .dir-btn.center-dir i {
-    font-size: 18px;
+    font-size: 16px;
     color: rgba(59, 130, 246, 0.8);
 }
 
@@ -409,8 +412,8 @@ body {
 }
 
 .center-dir img {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Botões de Ação na Direita */
@@ -432,8 +435,8 @@ body {
 .sub-actions-row .clear-btn {
     flex: 1;
     min-width: 0;
-    padding: 7px 4px;
-    font-size: 11px;
+    padding: 5px 3px;
+    font-size: 10px;
     display: flex;
     align-items: center;
     justify-content: center;

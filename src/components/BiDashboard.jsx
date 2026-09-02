@@ -75,7 +75,50 @@ export default function BiDashboard() {
                         {activeTab === 'loot' && (
                             <div className="bi-tab-pane active" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '20px' }}>
                                 <h3>Contador de Loot</h3>
-                                <p>Área para colar os logs do chat e contabilizar loot.</p>
+                                <p style={{ fontSize: '12px', color: '#94a3b8' }}>Cole abaixo as mensagens do sistema para extrair as quantidades de loot.</p>
+                                <textarea 
+                                    style={{ width: '100%', height: '100px', background: 'rgba(15, 23, 42, 0.5)', color: '#f8fafc', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '8px', padding: '10px', resize: 'vertical' }}
+                                    placeholder="Ex: You obtained 2x Mystic Fragment.&#10;You received 1x Gold Coin."
+                                    onChange={(e) => {
+                                        const text = e.target.value;
+                                        const parseItem = (itemName) => {
+                                            const regex = new RegExp(`(?:(\\d+)\\s*x\\s*)?${itemName}|${itemName}(?:\\s*x\\s*(\\d+))?`, 'gi');
+                                            let total = 0;
+                                            let match;
+                                            while ((match = regex.exec(text)) !== null) {
+                                                const count = parseInt(match[1] || match[2] || "1", 10);
+                                                total += count;
+                                            }
+                                            return total;
+                                        };
+                                        const mFrag = parseItem("mystic fragment");
+                                        const gCoin = parseItem("gold coin");
+                                        const gBar = parseItem("gold bar");
+                                        
+                                        // Update UI
+                                        const mFragEl = document.getElementById('loot-mystic');
+                                        if (mFragEl) mFragEl.innerText = mFrag;
+                                        const gCoinEl = document.getElementById('loot-coin');
+                                        if (gCoinEl) gCoinEl.innerText = gCoin;
+                                        const gBarEl = document.getElementById('loot-bar');
+                                        if (gBarEl) gBarEl.innerText = gBar;
+                                    }}
+                                ></textarea>
+                                
+                                <div className="loot-results" style={{ display: 'flex', gap: '30px', marginTop: '10px', justifyContent: 'center' }}>
+                                    <div className="loot-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        <img src="imgs_finder/mystic fragment.png" alt="Mystic Fragment" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                                        <span id="loot-mystic" style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '8px', color: '#f8fafc' }}>0</span>
+                                    </div>
+                                    <div className="loot-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        <img src="imgs_finder/gold coin.png" alt="Gold Coin" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                                        <span id="loot-coin" style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '8px', color: '#f8fafc' }}>0</span>
+                                    </div>
+                                    <div className="loot-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        <img src="imgs_finder/gold bar.png" alt="Gold Bar" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                                        <span id="loot-bar" style={{ fontWeight: 'bold', fontSize: '20px', marginTop: '8px', color: '#f8fafc' }}>0</span>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>

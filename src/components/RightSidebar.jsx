@@ -6,7 +6,7 @@ export default function RightSidebar() {
     const { 
         currentRegion, setRegion, curDist, setCurDist, curDir, setCurDir,
         lastPastedPoint, infos, setInfos, isHomeToggleActive, toggleSetting,
-        homePoints
+        homePoints, finderLevel, setFinderLevel, dungeonType, setDungeonType
     } = useStore();
 
     const distClick = (dist) => {
@@ -84,25 +84,6 @@ export default function RightSidebar() {
                 </div>
             </div>
 
-            <div className="region-row" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <select className="minimap-select" style={{ flex: 1 }} value={currentRegion} onChange={(e) => setRegion(e.target.value)}>
-                    <option value="kanto">Kanto</option>
-                    <option value="johto">Johto</option>
-                </select>
-                <div className="home-toggle">
-                    <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('isHomeToggleActive', e.target.checked)} />
-                    <label htmlFor="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo"><i className="fa-solid fa-anchor"></i></label>
-                </div>
-            </div>
-            
-            <div className="search-live-tracker">
-                <div className="tracker-item" data-tooltip="Finders usados nesta busca">
-                    <i className="fa-solid fa-satellite-dish"></i> <span>{infos.length}</span> finders
-                </div>
-                <div className="tracker-item" data-tooltip="Tempo decorrido nesta busca">
-                    <i className="fa-regular fa-clock"></i> <span>00:00</span>
-                </div>
-            </div>
 
             <div className="finder-colors">
                 <button className={`color-btn green ${curDist.max === 30 ? 'active' : ''}`} onClick={() => distClick(0)}><img src="imgs_finder/RadarGreen.png" alt="Verde"/></button>
@@ -123,6 +104,23 @@ export default function RightSidebar() {
             </div>
 
             <div className="finder-actions">
+                <div className="finder-level-filter" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <label style={{ fontSize: '11px', color: '#94a3b8', whiteSpace: 'nowrap' }}>Nível:</label>
+                    <select className="minimap-select" style={{ flex: 1, padding: '4px', fontSize: '11px', minWidth: '0' }} value={finderLevel} onChange={(e) => setFinderLevel(e.target.value)}>
+                        <option value="E">E</option>
+                        <option value="D">D</option>
+                        <option value="C">C</option>
+                        <option value="B">B</option>
+                        <option value="A">A</option>
+                        <option value="S">S</option>
+                    </select>
+                    
+                    <label style={{ fontSize: '11px', color: '#94a3b8', whiteSpace: 'nowrap', marginLeft: '4px' }}>Tipo:</label>
+                    <select className="minimap-select" style={{ flex: 1, padding: '4px', fontSize: '11px', minWidth: '0' }} value={dungeonType} onChange={(e) => setDungeonType(e.target.value)}>
+                        <option value="Normal">Normal</option>
+                        <option value="Fragmento">Fragmento</option>
+                    </select>
+                </div>
                 <button className="finish-btn">
                     <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> Registrar
                 </button>

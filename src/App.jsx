@@ -14,7 +14,10 @@ import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
-  const { session, setSession, curFloor, showCoordsSetting, setSettingsDrawer, setBiDashboard, setPlacesDrawer, toggleSidebar } = useStore();
+  const { 
+    session, setSession, curFloor, showCoordsSetting, setSettingsDrawer, setBiDashboard, setPlacesDrawer, toggleSidebar,
+    currentRegion, setRegion, isHomeToggleActive, toggleSetting, infos
+  } = useStore();
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
@@ -95,13 +98,31 @@ function App() {
       
       <div id="toast-container" className="toast-container"></div>
       
-      <button className="minimap-btn" data-tooltip="Configurações" onClick={() => setSettingsDrawer(true)} style={{ position: 'absolute', top: 15, left: 10, zIndex: 1000 }}><i className="fa-solid fa-gear"></i></button>
-      <button className="minimap-btn" data-tooltip="Mostrar/Esconder Lista" onClick={toggleSidebar} style={{ position: 'absolute', top: 15, left: 55, zIndex: 1000 }}><i className="fa-solid fa-list-ul"></i></button>
-      <button className="minimap-btn" data-tooltip="Painel de Estatísticas" onClick={() => setBiDashboard(true)} style={{ position: 'absolute', top: 15, left: 100, zIndex: 1000 }}><i className="fa-solid fa-chart-pie"></i></button>
-      <button className="minimap-btn" data-tooltip="Atalhos Rápidos" onClick={() => setPlacesDrawer(true)} style={{ position: 'absolute', top: 15, left: 145, zIndex: 1000 }}><i className="fa-solid fa-map-location-dot"></i></button>
+      <button className="minimap-btn" data-tooltip="Configurações" onClick={() => setSettingsDrawer(true)} style={{ position: 'absolute', top: 10, left: 10, zIndex: 1000 }}><i className="fa-solid fa-gear"></i></button>
+      <button className="minimap-btn" data-tooltip="Mostrar/Esconder Lista" onClick={toggleSidebar} style={{ position: 'absolute', top: 10, left: 45, zIndex: 1000 }}><i className="fa-solid fa-list-ul"></i></button>
+      <button className="minimap-btn" data-tooltip="Painel de Estatísticas" onClick={() => setBiDashboard(true)} style={{ position: 'absolute', top: 10, left: 80, zIndex: 1000 }}><i className="fa-solid fa-chart-pie"></i></button>
+      <button className="minimap-btn" data-tooltip="Atalhos Rápidos" onClick={() => setPlacesDrawer(true)} style={{ position: 'absolute', top: 10, left: 115, zIndex: 1000 }}><i className="fa-solid fa-map-location-dot"></i></button>
+      
+      <div className="top-center-panel" style={{ position: 'absolute', top: 10, left: 160, zIndex: 1000, display: 'flex', gap: '10px', alignItems: 'center', background: 'rgba(15, 23, 42, 0.75)', padding: '4px 12px', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(8px)' }}>
+          <select className="minimap-select" style={{ minWidth: '90px' }} value={currentRegion} onChange={(e) => setRegion(e.target.value)}>
+              <option value="kanto">Kanto</option>
+              <option value="johto">Johto</option>
+          </select>
+          <div className="home-toggle" style={{ display: 'flex', alignItems: 'center' }}>
+              <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('isHomeToggleActive', e.target.checked)} />
+              <label htmlFor="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo"><i className="fa-solid fa-anchor"></i></label>
+          </div>
+          <div style={{ width: '1px', height: '20px', background: 'rgba(255, 255, 255, 0.2)', margin: '0 4px' }}></div>
+          <div className="tracker-item" data-tooltip="Finders usados nesta busca" style={{ fontSize: '11px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <i className="fa-solid fa-satellite-dish" style={{ color: '#38bdf8' }}></i> <span style={{ color: '#f8fafc', fontWeight: 'bold' }}>{infos.length}</span> finders
+          </div>
+          <div className="tracker-item" data-tooltip="Tempo decorrido nesta busca" style={{ fontSize: '11px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <i className="fa-regular fa-clock" style={{ color: '#38bdf8' }}></i> <span style={{ color: '#f8fafc', fontWeight: 'bold' }}>00:00</span>
+          </div>
+      </div>
       
       {showCoordsSetting && (
-        <div id="coords-display" className="minimap-coords" style={{ left: 190 }}>
+        <div id="coords-display" className="minimap-coords" style={{ left: 15, top: 45 }}>
           {`(X, Y, ${curFloor})`}
         </div>
       )}

@@ -58,6 +58,19 @@ const useStore = create((set) => ({
     return { [key]: value };
   }),
 
+  // Registration Filter
+  finderLevel: localStorage.getItem('finder_level') || 'E',
+  setFinderLevel: (level) => set(() => {
+    localStorage.setItem('finder_level', level);
+    return { finderLevel: level };
+  }),
+  
+  dungeonType: localStorage.getItem('finder_dungeon_type') || 'Normal',
+  setDungeonType: (type) => set(() => {
+    localStorage.setItem('finder_dungeon_type', type);
+    return { dungeonType: type };
+  }),
+
   // Sidebar / UI State
   isSidebarOpen: true,
   isPlacesDrawerOpen: false,

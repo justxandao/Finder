@@ -36,7 +36,8 @@ function MapEvents() {
 export default function MapView() {
     const { 
         currentRegion, curFloor, regionConfigs, infos, lastPastedPoint, 
-        showMapLocations, allLocations, labelScopeSetting, labelsOpacitySetting 
+        showMapLocations, allLocations, labelScopeSetting, labelsOpacitySetting,
+        showSpawnsSetting, allSpawnMarks
     } = useStore();
     
     const [intersectionData, setIntersectionData] = useState(null);
@@ -66,6 +67,12 @@ export default function MapView() {
         return locList.filter(loc => loc.z === curFloor);
     }, [showMapLocations, allLocations, currentRegion, curFloor, labelScopeSetting]);
 
+    // Calcular spawns ativos
+    const activeSpawns = useMemo(() => {
+        if (!showSpawnsSetting) return [];
+        const spawns = allSpawnMarks[currentRegion] || [];
+        return spawns.filter(spawn => spawn.z === curFloor);
+    }, [showSpawnsSetting, allSpawnMarks, currentRegion, curFloor]);
     // Crosshair and User Pin logic
     const limitX = regionConfigs[currentRegion].limitX;
     const limitY = regionConfigs[currentRegion].limitY;
@@ -128,6 +135,18 @@ export default function MapView() {
                     iconAnchor: [0, 0]
                 });
                 return <Marker key={idx} position={[loc.y + 0.5, loc.x + 0.5]} icon={divIcon} interactive={false} zIndexOffset={loc.isCity ? 300 : 150} />;
+            })}
+
+            {/* Render Pokémon Spawns */}
+            {activeSpawns.map((spawn, idx) => {
+                const iconHtml = `<div class="pokemon-spawn-marker" title="${spawn.pokemon}"><img src="pokemon_icons/${spawn.pokemon}.png" alt="${spawn.pokemon}" style="width:24px;height:24px;object-fit:contain;filter:drop-shadow(0px 0px 2px rgba(0,0,0,0.8));"/></div>`;
+                const divIcon = L.divIcon({
+                    className: 'custom-spawn-divicon',
+                    html: iconHtml,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                });
+                return <Marker key={`spawn-${idx}`} position={[spawn.y + 0.5, spawn.x + 0.5]} icon={divIcon} interactive={false} zIndexOffset={200} />;
             })}
         </MapContainer>
     );
