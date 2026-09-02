@@ -24,6 +24,9 @@
     "appId": "com.crafter.finder",
     "productName": "Finder",
     "icon": "imgs_finder/icon_256.png",
+    "directories": {
+      "output": "release"
+    },
     "files": [
       "dist/**/*",
       "electron/**/*",
