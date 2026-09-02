@@ -10,10 +10,12 @@ function createWindow() {
     width: 800,
     height: 600,
     title: "Finder",
+    icon: path.join(__dirname, '../imgs_finder/icon_256.png'),
     alwaysOnTop: true, // Configurado como topo flutuante conforme pedido do usuário
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      webSecurity: false
     }
   });
 
