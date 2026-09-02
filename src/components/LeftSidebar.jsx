@@ -1,9 +1,22 @@
 import React from 'react';
 import useStore from '../store/useStore';
-import { directions } from '../utils/geometry';
+import useDraggable from '../hooks/useDraggable';
+
+const angleToIcon = {
+    '-45': 'fa-location-crosshairs',
+    '0': 'fa-arrow-right',
+    '45': 'fa-arrow-down-right',
+    '90': 'fa-arrow-down',
+    '135': 'fa-arrow-down-left',
+    '180': 'fa-arrow-left',
+    '225': 'fa-arrow-up-left',
+    '270': 'fa-arrow-up',
+    '315': 'fa-arrow-up-right'
+};
 
 export default function LeftSidebar() {
     const { infos, setInfos, isSidebarOpen } = useStore();
+    useDraggable('list-sidebar');
 
     if (!isSidebarOpen) return null;
 
@@ -28,17 +41,17 @@ export default function LeftSidebar() {
                         const isYellow = info.dist.max <= 500 && !isGreen;
                         const bgColor = isGreen ? 'rgba(34, 197, 94, 0.18)' : isYellow ? 'rgba(234, 179, 8, 0.18)' : 'rgba(239, 68, 68, 0.18)';
                         const borderColor = isGreen ? 'rgba(34, 197, 94, 0.5)' : isYellow ? 'rgba(234, 179, 8, 0.5)' : 'rgba(239, 68, 68, 0.5)';
-                        const dirName = info.ang === -45 ? 'Center' : directions[info.ang];
+                        const dirIcon = angleToIcon[info.ang] || 'fa-location-crosshairs';
                         return (
                             <div key={index} className="pos-item" style={{ backgroundColor: bgColor, borderColor }}>
-                                <span style={{ flex: 1, fontSize: '12px' }}>{`${info.x}, ${info.y}, ${info.z}`}</span>
+                                <span style={{ flex: 1, fontSize: '11px' }}>{`${info.x}, ${info.y}, ${info.z}`}</span>
                                 {/* Direction icon with small background chip */}
                                 <span style={{
                                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                                     background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
-                                    borderRadius: '5px', padding: '2px 5px', marginRight: '4px'
+                                    borderRadius: '4px', padding: '1px 4px', marginRight: '4px', color: 'rgba(255,255,255,0.7)'
                                 }}>
-                                    <img src={`imgs_finder/${dirName}.png`} style={{ width: '14px', height: '14px' }} alt="Dir" />
+                                    <i className={`fa-solid ${dirIcon}`} style={{ fontSize: '12px' }}></i>
                                 </span>
                                 {/* Delete button chip */}
                                 <span
@@ -47,10 +60,10 @@ export default function LeftSidebar() {
                                     style={{
                                         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                                         background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)',
-                                        borderRadius: '5px', padding: '2px 5px', cursor: 'pointer'
+                                        borderRadius: '4px', padding: '1px 4px', cursor: 'pointer'
                                     }}
                                 >
-                                    <img src="imgs_finder/Delete.png" style={{ width: '14px', height: '14px' }} alt="Delete" />
+                                    <img src="imgs_finder/Delete.png" style={{ width: '12px', height: '12px' }} alt="Delete" />
                                 </span>
                             </div>
                         );

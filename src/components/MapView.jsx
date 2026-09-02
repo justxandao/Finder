@@ -83,7 +83,22 @@ export default function MapView() {
         
         return floorSpawns.filter(spawn => {
             try {
-                return turf.booleanPointInPolygon(turf.point([spawn.x, spawn.y]), intersectionData.polygon);
+                const pt = turf.point([spawn.x, spawn.y]);
+                const geom = intersectionData.polygon.geometry || intersectionData.polygon;
+                
+                if (geom.type === 'MultiPolygon') {
+                    for (let coords of geom.coordinates) {
+                        if (turf.booleanPointInPolygon(pt, turf.polygon(coords))) return true;
+                    }
+                    return false;
+                } else if (geom.type === 'GeometryCollection') {
+                    for (let g of geom.geometries) {
+                        if (g.type === 'Polygon' && turf.booleanPointInPolygon(pt, turf.polygon(g.coordinates))) return true;
+                    }
+                    return false;
+                }
+                
+                return turf.booleanPointInPolygon(pt, intersectionData.polygon);
             } catch (e) {
                 return false;
             }

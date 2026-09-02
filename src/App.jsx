@@ -6,6 +6,7 @@ import LeftSidebar from './components/LeftSidebar';
 import SettingsDrawer from './components/SettingsDrawer';
 import BiDashboard from './components/BiDashboard';
 import RegisterModal from './components/RegisterModal';
+import AnchorModal from './components/AnchorModal';
 import Login from './components/Login';
 import PlacesDrawer from './components/PlacesDrawer';
 import './App.css';
@@ -33,7 +34,7 @@ function getBasePath() {
 function App() {
   const { 
     session, setSession, curFloor, showCoordsSetting, setSettingsDrawer, setBiDashboard, setPlacesDrawer, toggleSidebar,
-    currentRegion, setRegion, isHomeToggleActive, toggleSetting, infos, curCoords
+    currentRegion, setRegion, isHomeToggleActive, toggleSetting, infos, curCoords, setAnchorModal
   } = useStore();
   const [initializing, setInitializing] = useState(true);
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
@@ -137,10 +138,19 @@ function App() {
               <option value="kanto">Kanto</option>
               <option value="johto">Johto</option>
           </select>
-          <div className="home-toggle" style={{ display: 'flex', alignItems: 'center' }}>
-              <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('finderHomeToggle', e.target.checked)} />
-              <label htmlFor="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo"><i className="fa-solid fa-anchor"></i></label>
-          </div>
+          <button
+            onClick={() => setAnchorModal(true)}
+            data-tooltip="Configurar Âncora (Retorno Fixo)"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '6px', padding: '2px 6px', cursor: 'pointer',
+              color: isHomeToggleActive ? '#38bdf8' : '#94a3b8',
+              fontSize: '13px', transition: 'color 0.2s'
+            }}
+          >
+            <i className="fa-solid fa-anchor"></i>
+          </button>
 
           {/* Always-on-top toggle — icon only, no box */}
           <button
@@ -185,6 +195,7 @@ function App() {
       <PlacesDrawer />
       <BiDashboard />
       <RegisterModal elapsedSeconds={elapsed} />
+      <AnchorModal />
     </div>
   );
 }

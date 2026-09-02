@@ -1,8 +1,10 @@
 import React from 'react';
 import useStore from '../store/useStore';
 import { getPoints } from '../utils/geometry';
+import useDraggable from '../hooks/useDraggable';
 
 export default function RightSidebar({ elapsedSeconds = 0 }) {
+    useDraggable('finder-sidebar');
     const { 
         currentRegion, curDist, setCurDist, curDir, setCurDir,
         lastPastedPoint, infos, setInfos, 
@@ -21,8 +23,11 @@ export default function RightSidebar({ elapsedSeconds = 0 }) {
             const last = infos[infos.length - 1];
             if (last.x === lastPastedPoint.x && last.y === lastPastedPoint.y && last.z === lastPastedPoint.z) {
                 const newInfos = [...infos];
-                newInfos[newInfos.length - 1].dist = newDist;
-                newInfos[newInfos.length - 1].points = getPoints({ x: last.x, y: last.y, z: last.z }, last.ang, newDist.min, newDist.max);
+                newInfos[newInfos.length - 1] = {
+                    ...last,
+                    dist: newDist,
+                    points: getPoints({ x: last.x, y: last.y, z: last.z }, last.ang, newDist.min, newDist.max)
+                };
                 setInfos(newInfos);
             }
         }
@@ -122,15 +127,15 @@ export default function RightSidebar({ elapsedSeconds = 0 }) {
 
             <div className="finder-compass">
                 {/* Compass grid: NW N NE / W Center E / SW S SE */}
-                <button className="dir-btn" onClick={() => dirClick(5)}><img src="imgs_finder/NorthWest.png" style={{width:'16px',height:'16px'}} alt="NW"/></button>
-                <button className="dir-btn" onClick={() => dirClick(6)}><img src="imgs_finder/North.png" style={{width:'16px',height:'16px'}} alt="N"/></button>
-                <button className="dir-btn" onClick={() => dirClick(7)}><img src="imgs_finder/NorthEast.png" style={{width:'16px',height:'16px'}} alt="NE"/></button>
-                <button className="dir-btn" onClick={() => dirClick(4)}><img src="imgs_finder/West.png" style={{width:'16px',height:'16px'}} alt="W"/></button>
-                <button className="dir-btn center-dir" onClick={() => dirClick(-1)}><img src="imgs_finder/Center.png" style={{width:'16px',height:'16px'}} alt="Center"/></button>
-                <button className="dir-btn" onClick={() => dirClick(0)}><img src="imgs_finder/East.png" style={{width:'16px',height:'16px'}} alt="E"/></button>
-                <button className="dir-btn" onClick={() => dirClick(3)}><img src="imgs_finder/SouthWest.png" style={{width:'16px',height:'16px'}} alt="SW"/></button>
-                <button className="dir-btn" onClick={() => dirClick(2)}><img src="imgs_finder/South.png" style={{width:'16px',height:'16px'}} alt="S"/></button>
-                <button className="dir-btn" onClick={() => dirClick(1)}><img src="imgs_finder/SouthEast.png" style={{width:'16px',height:'16px'}} alt="SE"/></button>
+                <button className="dir-btn" onClick={() => dirClick(5)}><i className="fa-solid fa-arrow-up-left"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(6)}><i className="fa-solid fa-arrow-up"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(7)}><i className="fa-solid fa-arrow-up-right"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(4)}><i className="fa-solid fa-arrow-left"></i></button>
+                <button className="dir-btn center-dir" onClick={() => dirClick(-1)}><i className="fa-solid fa-location-crosshairs"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(0)}><i className="fa-solid fa-arrow-right"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(3)}><i className="fa-solid fa-arrow-down-left"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(2)}><i className="fa-solid fa-arrow-down"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(1)}><i className="fa-solid fa-arrow-down-right"></i></button>
             </div>
 
             <div className="finder-actions">

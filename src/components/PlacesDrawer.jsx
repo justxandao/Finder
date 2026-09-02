@@ -4,7 +4,7 @@ import useStore from '../store/useStore';
 export default function PlacesDrawer() {
     const { 
         isPlacesDrawerOpen, setPlacesDrawer,
-        allLocations, currentRegion, setRegion, setFloor
+        allLocations, currentRegion, setRegion, setFloor, setTeleportCoords
     } = useStore();
 
     const [filterRegion, setFilterRegion] = useState('all');
@@ -29,8 +29,7 @@ export default function PlacesDrawer() {
             setRegion(place.regionKey);
         }
         setFloor(place.z);
-        // Note: MapView handles centering automatically if we set a specific state, but for simplicity here we just change region/floor.
-        // A complete teleport would update map center via a state like 'teleportTarget'
+        setTeleportCoords({ x: place.x, y: place.y, z: place.z, region: place.regionKey });
         setPlacesDrawer(false);
     };
 

@@ -39,12 +39,14 @@ const useStore = create((set) => ({
   curDist: { min: 0, max: 30 },
   curDir: 0,
   curCoords: { x: 0, y: 0 },
+  teleportCoords: null, // { x, y, z, region }
   
   setInfos: (infos) => set({ infos }),
   setLastPastedPoint: (point) => set({ lastPastedPoint: point }),
   setCurDist: (dist) => set({ curDist: dist }),
   setCurDir: (dir) => set({ curDir: dir }),
   setCurCoords: (coords) => set({ curCoords: coords }),
+  setTeleportCoords: (coords) => set({ teleportCoords: coords }),
 
   // Settings
   showMapLocations: localStorage.getItem('finderShowLocations') !== 'false',
@@ -76,12 +78,14 @@ const useStore = create((set) => ({
   isSettingsDrawerOpen: false,
   isBiDashboardOpen: false,
   isRegisterModalOpen: false,
+  isAnchorModalOpen: false,
 
   toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   setPlacesDrawer: (open) => set({ isPlacesDrawerOpen: open }),
   setSettingsDrawer: (open) => set({ isSettingsDrawerOpen: open }),
   setBiDashboard: (open) => set({ isBiDashboardOpen: open }),
   setRegisterModal: (open) => set({ isRegisterModalOpen: open }),
+  setAnchorModal: (open) => set({ isAnchorModalOpen: open }),
 
   // Data
   allLocations: { Kanto: [], Johto: [], "Orange Archipelago": [] },
