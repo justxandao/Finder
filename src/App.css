@@ -2132,3 +2132,6 @@ input:checked + .slider.round:before {
     color: #fff;
     font-family: 'Inter', sans-serif;
 }
+
+.leaflet-container { background-color: #0f172a !important; }
+
