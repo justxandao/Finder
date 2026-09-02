@@ -21,6 +21,14 @@
       "csp": null
     }
   },
+  "plugins": {
+    "updater": {
+      "endpoints": [
+        "https://github.com/justxandao/Finder/releases/latest/download/update.json"
+      ],
+      "pubkey": "REPLACE_WITH_YOUR_UPDATER_PUBLIC_KEY"
+    }
+  },
   "bundle": {
     "active": true,
     "targets": "all",

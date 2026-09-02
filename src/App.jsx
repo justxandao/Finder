@@ -8,6 +8,8 @@ import PlacesDrawer from './components/PlacesDrawer';
 import BiDashboard from './components/BiDashboard';
 import Login from './components/Login';
 import { supabase } from './supabaseClient';
+import { check } from '@tauri-apps/plugin-updater';
+import { ask, message } from '@tauri-apps/plugin-dialog';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -25,6 +27,30 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
+
+    // Checar atualizações
+    async function checkForUpdates() {
+      try {
+        const update = await check();
+        if (update) {
+          const yes = await ask(`A nova versão ${update.version} está disponível! Deseja instalar agora?`, {
+            title: 'Atualização Disponível',
+            kind: 'info',
+          });
+          if (yes) {
+            await update.downloadAndInstall();
+            await message('Atualização concluída! O aplicativo será reiniciado.', { title: 'Sucesso', kind: 'info' });
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao buscar atualizações:", error);
+      }
+    }
+    
+    // Pequeno atraso para não travar a UI inicial
+    setTimeout(() => {
+        checkForUpdates();
+    }, 3000);
 
     return () => subscription.unsubscribe();
   }, [setSession]);
