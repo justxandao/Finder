@@ -8,33 +8,39 @@ export default function AnchorModal() {
         isHomeToggleActive, toggleSetting, curFloor
     } = useStore();
 
-    const [inputX, setInputX] = useState('');
-    const [inputY, setInputY] = useState('');
-    const [inputZ, setInputZ] = useState('');
+    const [coordsInput, setCoordsInput] = useState('');
 
     useEffect(() => {
         if (isAnchorModalOpen) {
             if (homePoints && homePoints.length > 0) {
-                setInputX(homePoints[0].x.toString());
-                setInputY(homePoints[0].y.toString());
-                setInputZ(homePoints[0].z.toString());
+                setCoordsInput(`${homePoints[0].x}, ${homePoints[0].y}, ${homePoints[0].z}`);
             } else {
-                setInputZ(curFloor.toString());
+                setCoordsInput(`0, 0, ${curFloor}`);
             }
         }
     }, [isAnchorModalOpen, homePoints, curFloor]);
 
     if (!isAnchorModalOpen) return null;
 
-    const handleSave = () => {
-        const x = parseInt(inputX, 10);
-        const y = parseInt(inputY, 10);
-        const z = parseInt(inputZ, 10);
+    const handlePaste = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            setCoordsInput(text);
+        } catch (err) {
+            alert("Não foi possível colar.");
+        }
+    };
 
-        if (isNaN(x) || isNaN(y) || isNaN(z)) {
-            alert("As coordenadas devem ser numéricas!");
+    const handleSave = () => {
+        const parts = coordsInput.trim().split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
+        if (parts.length < 2) {
+            alert("Formato inválido. Use: X, Y, Z");
             return;
         }
+        
+        const x = parts[0];
+        const y = parts[1];
+        const z = parts[2] !== undefined ? parts[2] : curFloor;
 
         setHomePoints([{ x, y, z }]);
         toggleSetting('finderHomeToggle', true);
@@ -63,19 +69,28 @@ export default function AnchorModal() {
                         Defina uma coordenada base. Ao usar este recurso, o finder fará os cálculos assumindo que você retorna para esta coordenada após cada encontro.
                     </p>
 
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
                         <div style={{ flex: 1 }}>
-                            <label style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px', display: 'block' }}>X</label>
-                            <input type="number" value={inputX} onChange={e => setInputX(e.target.value)} style={{ width: '100%', boxSizing: 'border-box' }} />
+                            <label style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px', display: 'block' }}>Coordenadas (X, Y, Z)</label>
+                            <input 
+                                type="text" 
+                                value={coordsInput} 
+                                onChange={e => setCoordsInput(e.target.value)} 
+                                style={{ width: '100%', boxSizing: 'border-box', height: '32px' }} 
+                                placeholder="123, 456, 7" 
+                            />
                         </div>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px', display: 'block' }}>Y</label>
-                            <input type="number" value={inputY} onChange={e => setInputY(e.target.value)} style={{ width: '100%', boxSizing: 'border-box' }} />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <label style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px', display: 'block' }}>Z</label>
-                            <input type="number" value={inputZ} onChange={e => setInputZ(e.target.value)} style={{ width: '100%', boxSizing: 'border-box' }} />
-                        </div>
+                        <button 
+                            onClick={handlePaste} 
+                            style={{ 
+                                height: '32px', padding: '0 12px', background: 'rgba(56, 189, 248, 0.15)', 
+                                border: '1px solid rgba(56,189,248,0.4)', borderRadius: '6px', 
+                                color: '#38bdf8', cursor: 'pointer', fontSize: '13px' 
+                            }}
+                            data-tooltip="Colar da área de transferência"
+                        >
+                            <i className="fa-solid fa-paste"></i>
+                        </button>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
