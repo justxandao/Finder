@@ -1,49 +1,31 @@
 {
-  "name": "crafter",
-  "version": "1.0.6",
-  "main": "main.js",
+  "name": "tauri-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "electron-builder build --win"
-  },
-  "build": {
-    "appId": "com.crafter.finder",
-    "productName": "Finder",
-    "icon": "imgs_finder/icon_256.png",
-    "files": [
-      "**/*",
-      "!**/.Jules",
-      "!**/.git",
-      "!dist"
-    ],
-    "win": {
-      "target": "nsis",
-      "icon": "imgs_finder/icon_256.png"
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Kaaize/Crafter.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Kaaize/Crafter/issues"
-  },
-  "homepage": "https://github.com/Kaaize/Crafter#readme",
-  "description": "",
-  "devDependencies": {
-    "electron": "^44.0.0",
-    "electron-builder": "^26.15.3"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.3.1",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2.7.3",
+    "@tauri-apps/plugin-fs": "^2.5.2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-shell": "^2.3.6",
     "@turf/turf": "^7.4.0",
-    "express": "^5.2.1",
-    "jsdom": "^29.1.1",
     "leaflet": "^1.9.4",
-    "puppeteer": "^25.9.0"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@vitejs/plugin-react": "^4.6.0",
+    "vite": "^7.0.4"
   }
 }
