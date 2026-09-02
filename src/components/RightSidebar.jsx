@@ -2,8 +2,10 @@ import React from 'react';
 import useStore from '../store/useStore';
 import { getPoints } from '../utils/geometry';
 import useDraggable from '../hooks/useDraggable';
+import { useToast } from './Toast';
 
 export default function RightSidebar({ elapsedSeconds = 0 }) {
+    const showToast = useToast();
     useDraggable('finder-sidebar');
     const { 
         currentRegion, curDist, setCurDist, curDir, setCurDir,
@@ -38,7 +40,7 @@ export default function RightSidebar({ elapsedSeconds = 0 }) {
         setCurDir(ang);
         
         if (!lastPastedPoint) {
-            alert("Cole uma coordenada primeiro!");
+            showToast("Cole uma coordenada primeiro!", "error");
             return;
         }
 
@@ -80,11 +82,12 @@ export default function RightSidebar({ elapsedSeconds = 0 }) {
             if (parts.length >= 2) {
                 const x = parts[0], y = parts[1], z = parts[2] !== undefined ? parts[2] : curFloor;
                 setLastPastedPoint({ x, y, z });
+                showToast(`Coordenada ${x}, ${y}, ${z} adicionada!`, "success");
             } else {
-                alert("Formato inválido. Use: X, Y, Z");
+                showToast("Formato inválido. Use: X, Y, Z", "error");
             }
         } catch (err) {
-            alert("Não foi possível ler a área de transferência.");
+            showToast("Não foi possível colar da área de transferência.", "error");
         }
     };
 
@@ -139,8 +142,15 @@ export default function RightSidebar({ elapsedSeconds = 0 }) {
             </div>
 
             <div className="finder-actions">
-                <button className="finish-btn" onClick={() => setRegisterModal(true)} style={{ fontSize: '13px', padding: '6px 10px', height: 'auto' }}>
-                    <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> Registrar
+                <button className="finish-btn" onClick={() => setRegisterModal(true)} style={{ fontSize: '13px', padding: '8px 10px', height: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> 
+                        <span style={{ fontWeight: 'bold' }}>Registrar</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.2)', padding: '4px', borderRadius: '4px' }}>
+                        <span><i className="fa-solid fa-crosshairs" style={{ color: '#fbbf24' }}></i> {infos.length}</span>
+                        <span><i className="fa-regular fa-clock" style={{ color: '#c4b5fd' }}></i> {Math.floor(elapsedSeconds / 60).toString().padStart(2, '0')}:{(elapsedSeconds % 60).toString().padStart(2, '0')}</span>
+                    </div>
                 </button>
                 <div className="sub-actions-row">
                     <button className="action-btn" onClick={undoLast}><i className="fa-solid fa-rotate-left"></i> Desfazer</button>

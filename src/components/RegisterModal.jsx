@@ -1,7 +1,9 @@
 import React from 'react';
 import useStore from '../store/useStore';
+import { useToast } from './Toast';
 
 export default function RegisterModal({ elapsedSeconds = 0 }) {
+    const showToast = useToast();
     const { 
         isRegisterModalOpen, setRegisterModal,
         finderLevel, setFinderLevel,
@@ -34,6 +36,7 @@ export default function RegisterModal({ elapsedSeconds = 0 }) {
         useStore.getState().setInfos([]);
         useStore.getState().setDungeonType('Normal');
         setRegisterModal(false);
+        showToast(`Caçada registrada com sucesso!`, 'success');
     };
 
     return (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import useStore from '../store/useStore';
+import { useToast } from './Toast';
 
 export default function AnchorModal() {
+    const showToast = useToast();
     const { 
         isAnchorModalOpen, setAnchorModal, 
         homePoints, setHomePoints,
@@ -26,15 +28,16 @@ export default function AnchorModal() {
         try {
             const text = await navigator.clipboard.readText();
             setCoordsInput(text);
+            showToast("Coordenadas coladas!", "success");
         } catch (err) {
-            alert("Não foi possível colar.");
+            showToast("Não foi possível colar da área de transferência.", "error");
         }
     };
 
     const handleSave = () => {
         const parts = coordsInput.trim().split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
         if (parts.length < 2) {
-            alert("Formato inválido. Use: X, Y, Z");
+            showToast("Formato inválido. Use: X, Y, Z", "error");
             return;
         }
         
@@ -45,6 +48,7 @@ export default function AnchorModal() {
         setHomePoints([{ x, y, z }]);
         toggleSetting('finderHomeToggle', true);
         setAnchorModal(false);
+        showToast("Âncora salva com sucesso!", "success");
     };
 
     const handleCancel = () => {

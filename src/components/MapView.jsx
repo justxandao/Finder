@@ -4,6 +4,7 @@ import L from 'leaflet';
 import useStore from '../store/useStore';
 import * as turf from '@turf/turf';
 import { calcIntersection } from '../utils/geometry';
+import { useToast } from './Toast';
 import 'leaflet/dist/leaflet.css';
 
 // Leaflet config
@@ -11,7 +12,8 @@ const CRSPixel = L.Util.extend(L.CRS.Simple, { transformation: new L.Transformat
 const locationIcon = L.icon({ iconUrl: 'imgs_finder/location.png', iconSize: [24, 24], iconAnchor: [12, 24] });
 
 function MapEvents() {
-    const { setLastPastedPoint, setCurCoords, curFloor, regionConfigs, currentRegion } = useStore();
+    const { setLastPastedPoint, setCurCoords, curFloor, regionConfigs, currentRegion, teleportCoords, setTeleportCoords } = useStore();
+    const showToast = useToast();
     const map = useMapEvents({
         click: (e) => {
             const intX = Math.floor(e.latlng.lng);
@@ -20,8 +22,8 @@ function MapEvents() {
             
             const coordString = `${intX}, ${intY}, ${curFloor}`;
             navigator.clipboard.writeText(coordString)
-                .then(() => console.log("Copied: ", coordString))
-                .catch(err => console.error("Clipboard error:", err));
+                .then(() => showToast(`Coordenada copiada: ${coordString}`, 'success'))
+                .catch(err => showToast("Erro ao copiar para a área de transferência.", 'error'));
         },
         mousemove: (e) => {
             const intX = Math.floor(e.latlng.lng);
