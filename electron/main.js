@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -7,13 +7,16 @@ const __dirname = path.dirname(__filename);
 
 app.disableHardwareAcceleration();
 
+// Remove native menu bar completely
+Menu.setApplicationMenu(null);
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     title: "Finder",
     icon: path.join(__dirname, '../imgs_finder/icon_256.png'),
-    alwaysOnTop: true, // Configurado como topo flutuante conforme pedido do usuário
+    alwaysOnTop: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -21,21 +24,20 @@ function createWindow() {
     }
   });
 
-  // Em modo de desenvolvimento, o Electron tenta carregar o servidor do Vite
+  // IPC handler so the renderer can toggle alwaysOnTop
+  ipcMain.on('toggle-always-on-top', (event, value) => {
+    win.setAlwaysOnTop(value);
+  });
+
   const isDev = !app.isPackaged;
 
   if (isDev) {
     win.loadURL('http://localhost:1420').catch(() => {
-        // Fallback em caso de erro de conexão com Vite
-        console.error("Não foi possível conectar ao servidor de desenvolvimento do Vite (http://localhost:1420). Certifique-se que o vite está rodando.");
+      console.error("Não foi possível conectar ao servidor Vite (http://localhost:1420).");
     });
   } else {
-    // Em produção, ele carrega o arquivo index.html compilado na pasta dist
     win.loadFile(path.join(__dirname, '../dist/index.html'));
   }
-
-  // Open DevTools to debug white screen issues
-  win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {

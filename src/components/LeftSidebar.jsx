@@ -24,12 +24,34 @@ export default function LeftSidebar() {
                 </button>
                 <div id="pos-list">
                     {infos.map((info, index) => {
-                        let bgColor = info.dist.max <= 30 ? 'rgba(34, 197, 94, 0.4)' : info.dist.max <= 500 ? 'rgba(234, 179, 8, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+                        const isGreen = info.dist.max <= 30;
+                        const isYellow = info.dist.max <= 500 && !isGreen;
+                        const bgColor = isGreen ? 'rgba(34, 197, 94, 0.18)' : isYellow ? 'rgba(234, 179, 8, 0.18)' : 'rgba(239, 68, 68, 0.18)';
+                        const borderColor = isGreen ? 'rgba(34, 197, 94, 0.5)' : isYellow ? 'rgba(234, 179, 8, 0.5)' : 'rgba(239, 68, 68, 0.5)';
+                        const dirName = info.ang === -45 ? 'Center' : directions[info.ang];
                         return (
-                            <div key={index} className="pos-item" style={{ backgroundColor: bgColor, borderColor: bgColor.replace('0.4', '0.8') }}>
-                                <span>{`${info.x}, ${info.y}, ${info.z} `}</span>
-                                <img src={`imgs_finder/${info.ang === -45 ? 'Center' : directions[info.ang]}.png`} className="del-btn" alt="Dir" />
-                                <img src="imgs_finder/Delete.png" className="del-btn" alt="Delete" onClick={() => removeItem(index)} />
+                            <div key={index} className="pos-item" style={{ backgroundColor: bgColor, borderColor }}>
+                                <span style={{ flex: 1, fontSize: '12px' }}>{`${info.x}, ${info.y}, ${info.z}`}</span>
+                                {/* Direction icon with small background chip */}
+                                <span style={{
+                                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
+                                    borderRadius: '5px', padding: '2px 5px', marginRight: '4px'
+                                }}>
+                                    <img src={`imgs_finder/${dirName}.png`} style={{ width: '14px', height: '14px' }} alt="Dir" />
+                                </span>
+                                {/* Delete button chip */}
+                                <span
+                                    onClick={() => removeItem(index)}
+                                    title="Remover"
+                                    style={{
+                                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                        background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)',
+                                        borderRadius: '5px', padding: '2px 5px', cursor: 'pointer'
+                                    }}
+                                >
+                                    <img src="imgs_finder/Delete.png" style={{ width: '14px', height: '14px' }} alt="Delete" />
+                                </span>
                             </div>
                         );
                     })}

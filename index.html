@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        alert("Error: " + msg + "\nURL: " + url + "\nLine: " + line + "\nCol: " + col + "\nStack: " + (error ? error.stack : ""));
+      };
+      window.onunhandledrejection = function(event) {
+        alert("Unhandled Promise Rejection: " + event.reason);
+      };
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -2,12 +2,12 @@ import React from 'react';
 import useStore from '../store/useStore';
 import { getPoints } from '../utils/geometry';
 
-export default function RightSidebar() {
+export default function RightSidebar({ elapsedSeconds = 0 }) {
     const { 
-        currentRegion, setRegion, curDist, setCurDist, curDir, setCurDir,
-        lastPastedPoint, infos, setInfos, isHomeToggleActive, toggleSetting,
+        currentRegion, curDist, setCurDist, curDir, setCurDir,
+        lastPastedPoint, infos, setInfos, 
         homePoints, finderLevel, setFinderLevel, dungeonType, setDungeonType,
-        setRegisterModal
+        setRegisterModal, curFloor, setLastPastedPoint
     } = useStore();
 
     const distClick = (dist) => {
@@ -65,7 +65,22 @@ export default function RightSidebar() {
     const clearList = () => {
         setInfos([]);
         setDungeonType('Normal');
-        // TODO: clear spawns and intersection in store if needed
+    };
+
+    const handlePaste = async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            // Accept formats: "x, y, z" or "x y z"
+            const parts = text.trim().split(/[\s,]+/).map(Number).filter(n => !isNaN(n));
+            if (parts.length >= 2) {
+                const x = parts[0], y = parts[1], z = parts[2] !== undefined ? parts[2] : curFloor;
+                setLastPastedPoint({ x, y, z });
+            } else {
+                alert("Formato inválido. Use: X, Y, Z");
+            }
+        } catch (err) {
+            alert("Não foi possível ler a área de transferência.");
+        }
     };
 
     return (
@@ -74,18 +89,30 @@ export default function RightSidebar() {
                 <i className="fa-solid fa-grip-lines"></i>
             </div>
 
-            <div className="top-widgets">
-                <button id="btn-paste" className="minimap-btn" data-tooltip="Colar Coordenadas">
-                    <i className="fa-solid fa-location-dot"></i>
+            {/* Paste button — compact, less round */}
+            <div className="top-widgets" style={{ justifyContent: 'center' }}>
+                <button
+                    id="btn-paste"
+                    onClick={handlePaste}
+                    data-tooltip="Colar Coordenadas (X, Y, Z)"
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        background: 'rgba(56, 189, 248, 0.15)',
+                        border: '1px solid rgba(56,189,248,0.4)',
+                        borderRadius: '8px',
+                        padding: '5px 14px',
+                        color: '#38bdf8',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        transition: 'all 0.2s',
+                        width: '100%'
+                    }}
+                >
+                    <i className="fa-solid fa-paste"></i>
+                    Colar Coord
                 </button>
-                <div className="minimap-pin" style={{ marginLeft: 'auto' }}>
-                    <input type="checkbox" id="always-on-top" style={{ display: 'none' }} 
-                        // onChange={(e) => toggleAlwaysOnTop(e.target.checked)}
-                    />
-                    <label htmlFor="always-on-top" data-tooltip="Fixar no Topo"><i className="fa-solid fa-thumbtack"></i></label>
-                </div>
             </div>
-
 
             <div className="finder-colors">
                 <button className={`color-btn green ${curDist.max === 30 ? 'active' : ''}`} onClick={() => distClick(0)}><img src="imgs_finder/RadarGreen.png" alt="Verde"/></button>
@@ -94,15 +121,15 @@ export default function RightSidebar() {
             </div>
 
             <div className="finder-compass">
-                <button className="dir-btn" onClick={() => dirClick(5)}><i className="fa-solid fa-location-arrow" style={{ transform: 'rotate(-90deg)' }}></i></button>
+                <button className="dir-btn" onClick={() => dirClick(5)}><i className="fa-solid fa-arrow-up-left"></i></button>
                 <button className="dir-btn" onClick={() => dirClick(6)}><i className="fa-solid fa-arrow-up"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(7)}><i className="fa-solid fa-location-arrow"></i></button>
+                <button className="dir-btn" onClick={() => dirClick(7)}><i className="fa-solid fa-arrow-up-right"></i></button>
                 <button className="dir-btn" onClick={() => dirClick(4)}><i className="fa-solid fa-arrow-left"></i></button>
                 <button className="dir-btn center-dir" onClick={() => dirClick(-1)}><i className="fa-solid fa-location-crosshairs"></i></button>
                 <button className="dir-btn" onClick={() => dirClick(0)}><i className="fa-solid fa-arrow-right"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(3)}><i className="fa-solid fa-location-arrow" style={{ transform: 'rotate(180deg)' }}></i></button>
+                <button className="dir-btn" onClick={() => dirClick(3)}><i className="fa-solid fa-arrow-down-left"></i></button>
                 <button className="dir-btn" onClick={() => dirClick(2)}><i className="fa-solid fa-arrow-down"></i></button>
-                <button className="dir-btn" onClick={() => dirClick(1)}><i className="fa-solid fa-location-arrow" style={{ transform: 'rotate(90deg)' }}></i></button>
+                <button className="dir-btn" onClick={() => dirClick(1)}><i className="fa-solid fa-arrow-down-right"></i></button>
             </div>
 
             <div className="finder-actions">

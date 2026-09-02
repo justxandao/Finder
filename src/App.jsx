@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import useStore from './store/useStore';
 import MapView from './components/MapView';
 import RightSidebar from './components/RightSidebar';
@@ -8,9 +8,27 @@ import BiDashboard from './components/BiDashboard';
 import RegisterModal from './components/RegisterModal';
 import Login from './components/Login';
 import PlacesDrawer from './components/PlacesDrawer';
-import { supabase } from './supabaseClient';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+
+// Use ipcRenderer from Electron (available via nodeIntegration)
+let ipcRenderer = null;
+try {
+  const { ipcRenderer: ipc } = window.require('electron');
+  ipcRenderer = ipc;
+} catch (e) {
+  // Running in browser / dev outside electron
+}
+
+// Resolve base path for JSON files (file:// in production, / in dev)
+function getBasePath() {
+  if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+    // In packaged Electron, __dirname of dist/index.html is dist/
+    const url = new URL(window.location.href);
+    return url.href.replace(/index\.html.*$/, '');
+  }
+  return '/';
+}
 
 function App() {
   const { 
@@ -18,24 +36,52 @@ function App() {
     currentRegion, setRegion, isHomeToggleActive, toggleSetting, infos
   } = useStore();
   const [initializing, setInitializing] = useState(true);
+  const [alwaysOnTop, setAlwaysOnTop] = useState(false);
+
+  // Timer state — tracks elapsed time since first finder in this session
+  const [elapsed, setElapsed] = useState(0);
+  const timerRef = useRef(null);
+  const startTimeRef = useRef(null);
+
+  // Start/reset timer when infos changes
+  useEffect(() => {
+    if (infos.length === 1 && !timerRef.current) {
+      // First item added — start timer
+      startTimeRef.current = Date.now();
+      timerRef.current = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
+      }, 1000);
+    }
+    if (infos.length === 0) {
+      // Cleared — reset
+      if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+      setElapsed(0);
+      startTimeRef.current = null;
+    }
+  }, [infos.length]);
+
+  // Expose elapsed + startTime to store for RegisterModal to use
+  useEffect(() => {
+    useStore.getState()._elapsedSeconds = elapsed;
+  }, [elapsed]);
 
   useEffect(() => {
-    // Carregar sessão inicial (Login desativado temporariamente)
+    // Bypass login
     setSession({ user: { id: 'dev-mode' } });
     setInitializing(false);
-
-    // No need to unsubscribe since auth listener is removed
   }, [setSession]);
 
   useEffect(() => {
-    if (!session) return; // Só carrega se estiver logado
+    if (!session) return;
     
-    fetch('/locations.json')
+    const base = getBasePath();
+
+    fetch(`${base}locations.json`)
       .then(res => res.json())
       .then(data => useStore.getState().setLocations(data))
       .catch(err => console.error("Erro locations.json:", err));
 
-    fetch('/spawns.json')
+    fetch(`${base}spawns.json`)
       .then(res => res.json())
       .then(data => {
         const spawns = { kanto: [], johto: [] };
@@ -56,6 +102,18 @@ function App() {
       .catch(err => console.error("Erro spawns.json:", err));
   }, [session]);
 
+  const handleAlwaysOnTop = () => {
+    const next = !alwaysOnTop;
+    setAlwaysOnTop(next);
+    if (ipcRenderer) ipcRenderer.send('toggle-always-on-top', next);
+  };
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
   if (initializing) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#0f172a', color: 'white' }}>Carregando...</div>;
 
   if (!session) {
@@ -67,11 +125,13 @@ function App() {
       
       <div id="toast-container" className="toast-container"></div>
       
+      {/* Top-left toolbar */}
       <button className="minimap-btn" data-tooltip="Configurações" onClick={() => setSettingsDrawer(true)} style={{ position: 'absolute', top: 10, left: 10, zIndex: 1000 }}><i className="fa-solid fa-gear"></i></button>
       <button className="minimap-btn" data-tooltip="Mostrar/Esconder Lista" onClick={toggleSidebar} style={{ position: 'absolute', top: 10, left: 45, zIndex: 1000 }}><i className="fa-solid fa-list-ul"></i></button>
       <button className="minimap-btn" data-tooltip="Painel de Estatísticas" onClick={() => setBiDashboard(true)} style={{ position: 'absolute', top: 10, left: 80, zIndex: 1000 }}><i className="fa-solid fa-chart-pie"></i></button>
       <button className="minimap-btn" data-tooltip="Atalhos Rápidos" onClick={() => setPlacesDrawer(true)} style={{ position: 'absolute', top: 10, left: 115, zIndex: 1000 }}><i className="fa-solid fa-map-location-dot"></i></button>
       
+      {/* Top center: region + anchor + always-on-top + session stats */}
       <div className="top-center-panel" style={{ position: 'absolute', top: 10, left: 160, zIndex: 1000, display: 'flex', gap: '10px', alignItems: 'center', background: 'rgba(15, 23, 42, 0.75)', padding: '4px 12px', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(8px)' }}>
           <select className="minimap-select" style={{ minWidth: '90px' }} value={currentRegion} onChange={(e) => setRegion(e.target.value)}>
               <option value="kanto">Kanto</option>
@@ -81,6 +141,34 @@ function App() {
               <input type="checkbox" id="home-toggle-checkbox" style={{ display: 'none' }} checked={isHomeToggleActive} onChange={(e) => toggleSetting('isHomeToggleActive', e.target.checked)} />
               <label htmlFor="home-toggle-checkbox" data-tooltip="Ativar Retorno Fixo"><i className="fa-solid fa-anchor"></i></label>
           </div>
+
+          {/* Always-on-top toggle */}
+          <button
+            onClick={handleAlwaysOnTop}
+            data-tooltip={alwaysOnTop ? 'Desativar Sempre no Topo' : 'Sempre no Topo'}
+            style={{
+              background: alwaysOnTop ? 'rgba(56, 189, 248, 0.25)' : 'transparent',
+              border: alwaysOnTop ? '1px solid rgba(56,189,248,0.6)' : '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '6px', padding: '2px 7px', cursor: 'pointer', color: alwaysOnTop ? '#38bdf8' : '#94a3b8',
+              fontSize: '13px', transition: 'all 0.2s'
+            }}
+          >
+            <i className="fa-solid fa-thumbtack"></i>
+          </button>
+
+          {/* Session stats: finders count + timer */}
+          {infos.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '10px' }}>
+              <span style={{ color: '#94a3b8', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <i className="fa-solid fa-location-dot" style={{ color: '#f59e0b' }}></i>
+                <strong style={{ color: '#fbbf24' }}>{infos.length}</strong>
+              </span>
+              <span style={{ color: '#94a3b8', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <i className="fa-solid fa-clock" style={{ color: '#a78bfa' }}></i>
+                <strong style={{ color: '#c4b5fd' }}>{formatTime(elapsed)}</strong>
+              </span>
+            </div>
+          )}
       </div>
       
       {showCoordsSetting && (
@@ -90,12 +178,12 @@ function App() {
       )}
 
       <MapView />
-      <RightSidebar />
+      <RightSidebar elapsedSeconds={elapsed} />
       <LeftSidebar />
       <SettingsDrawer />
       <PlacesDrawer />
       <BiDashboard />
-      <RegisterModal />
+      <RegisterModal elapsedSeconds={elapsed} />
     </div>
   );
 }

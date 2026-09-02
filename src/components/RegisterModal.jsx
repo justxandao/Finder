@@ -1,7 +1,7 @@
 import React from 'react';
 import useStore from '../store/useStore';
 
-export default function RegisterModal() {
+export default function RegisterModal({ elapsedSeconds = 0 }) {
     const { 
         isRegisterModalOpen, setRegisterModal,
         finderLevel, setFinderLevel,
@@ -11,6 +11,12 @@ export default function RegisterModal() {
 
     if (!isRegisterModalOpen) return null;
 
+    const formatTime = (secs) => {
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = (secs % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    };
+
     const handleRegister = () => {
         const history = JSON.parse(localStorage.getItem('finder_bi_history') || '[]');
         const newEntry = {
@@ -19,7 +25,7 @@ export default function RegisterModal() {
             level: finderLevel,
             region: currentRegion,
             finders: infos.length,
-            durationSeconds: 0 // TODO: tracker time
+            durationSeconds: elapsedSeconds
         };
         history.push(newEntry);
         localStorage.setItem('finder_bi_history', JSON.stringify(history));
@@ -34,30 +40,33 @@ export default function RegisterModal() {
         <>
             <div className="drawer-backdrop active" onClick={() => setRegisterModal(false)}></div>
             <div className="custom-modal-overlay visible" style={{ zIndex: 3000 }}>
-                <div className="bi-dashboard-modal" style={{ width: '350px', height: 'auto', padding: '20px' }}>
+                <div className="bi-dashboard-modal" style={{ width: '340px', height: 'auto', padding: '20px' }}>
                     <div className="modal-header">
                         <div className="title-area">
-                            <h3 style={{ display: 'flex', alignItems: 'center', margin: 0, color: '#f8fafc', fontSize: '18px' }}>
-                                <img src="imgs_finder/chest.png" alt="Baú" style={{width:'24px', marginRight:'10px'}}/> Registrar Caça
+                            <h3 style={{ display: 'flex', alignItems: 'center', margin: 0, color: '#f8fafc', fontSize: '17px' }}>
+                                <img src="imgs_finder/chest.png" alt="Baú" style={{width:'22px', marginRight:'10px'}}/> Registrar Caça
                             </h3>
                         </div>
                         <button className="close-modal-btn" onClick={() => setRegisterModal(false)}>&times;</button>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '18px' }}>
                         
-                        <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.5)', padding: '15px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <span style={{ color: '#94a3b8', fontSize: '12px' }}>Finders Usados</span>
-                                <span style={{ color: '#38bdf8', fontSize: '24px', fontWeight: 'bold' }}>{infos.length}</span>
+                        {/* Session summary */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.5)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                <span style={{ color: '#94a3b8', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Finders Usados</span>
+                                <span style={{ color: '#fbbf24', fontSize: '26px', fontWeight: '700', lineHeight: 1 }}>{infos.length}</span>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <span style={{ color: '#94a3b8', fontSize: '12px' }}>Tempo Decorrido</span>
-                                <span style={{ color: '#38bdf8', fontSize: '24px', fontWeight: 'bold' }}>00:00</span>
+                            <div style={{ width: '1px', background: 'rgba(255,255,255,0.08)' }}></div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                <span style={{ color: '#94a3b8', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tempo Decorrido</span>
+                                <span style={{ color: '#c4b5fd', fontSize: '26px', fontWeight: '700', lineHeight: 1 }}>{formatTime(elapsedSeconds)}</span>
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        {/* Fields */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <label style={{ color: '#f8fafc', fontSize: '13px' }}>Nível do Finder</label>
                                 <select className="minimap-select" style={{ width: '130px', padding: '6px' }} value={finderLevel} onChange={(e) => setFinderLevel(e.target.value)}>
@@ -79,8 +88,8 @@ export default function RegisterModal() {
                             </div>
                         </div>
 
-                        <button className="finish-btn" onClick={handleRegister} style={{ marginTop: '10px', width: '100%', height: '40px', fontSize: '16px' }}>
-                            Confirmar Registro
+                        <button className="finish-btn" onClick={handleRegister} style={{ marginTop: '4px', width: '100%', height: '40px', fontSize: '15px' }}>
+                            <img src="imgs_finder/chest.png" className="btn-chest-img" alt="Baú" /> Registrar
                         </button>
                     </div>
                 </div>
